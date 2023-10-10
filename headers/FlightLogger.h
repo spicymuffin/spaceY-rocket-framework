@@ -7,18 +7,22 @@ using namespace std;
 class FlightLogger
 {
 public:
-    FlightLogger(string _name, int _bufferSize)
+    FlightLogger(string _name)
     {
         name = _name;
-        bufferSize = _bufferSize;
     };
 
-    void writeData(){
-
+    void dumpTickBuffer()
+    {
+        for (int i = 0; i < buffer.size(); i++)
+        {
+            
+        }
     };
 
 private:
-    int bufferSize;
-    vector<int> buffer;
+    ofstream dumpFile;
+
+    vector<string> buffer;
     string name;
 };

@@ -6,6 +6,8 @@
 
 using namespace std;
 
+// set updateFrequency to -1 to make it an not updating module.
+
 class RocketModule
 {
 public:
