@@ -30,13 +30,14 @@ int main(int argc, char *argv[])
     // init classes
 
     // initialize flight log
-    FlightLogger flightLog = FlightLogger("main log");
-    flightLog.dumpTickBuffer();
+    FlightLogger flightLog = FlightLogger("main flight log");
 
-    IMU mainIMU = IMU("mainIMU", 100);
+    // initIMU data saver
+    TextDataSaver IMUDataSaver = TextDataSaver("main IMU data saver", -1, cur_dir + IMU_LOGS_DIRECTORY);
+    // init IMU
+    IMU mainIMU = IMU("main IMU", 100, &IMUDataSaver);
+
     cout << mainIMU.getName() << endl;
-
-    TextDataSaver IMULog = TextDataSaver("IMU log", -1, cur_dir + IMU_LOGS_DIRECTORY);
 
     return 0;
 }

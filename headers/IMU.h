@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -7,18 +9,25 @@
 
 using namespace std;
 
+//TODO: these classes shouldn't cout anyting!
+
 class IMU : public RocketModule, public Actuator
 {
 public:
-    IMU(string _name, int _updateFrequency) : RocketModule(_name, _updateFrequency)
+    IMU(string _name, int _updateFrequency, TextDataSaver *_textDataSaver) : RocketModule(_name, _updateFrequency)
     {
-        cout << "asd" << endl;
+        textDataSaver = _textDataSaver;
+        cout << name << " initialized." << endl;
     };
 
     int update()
     {
         cout << name << " update" << endl;
 
+
         return 0;
-    }
+    };
+
+private:
+    TextDataSaver *textDataSaver;
 };
