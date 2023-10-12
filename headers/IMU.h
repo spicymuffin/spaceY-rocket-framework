@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+
 #include "RocketModule.h"
 #include "Actuator.h"
 #include "TextDataSaver.h"
@@ -17,14 +18,15 @@ public:
     IMU(string _name, int _updateFrequency, TextDataSaver *_textDataSaver) : RocketModule(_name, _updateFrequency)
     {
         textDataSaver = _textDataSaver;
-        cout << name << " initialized." << endl;
     };
 
     int update()
     {
         cout << name << " update" << endl;
 
+        //TODO: get data from IMU, parse, organize
 
+        textDataSaver->dumpLine("a");
         return 0;
     };
 

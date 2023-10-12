@@ -17,10 +17,8 @@ public:
         updateFrequency = _updateFrequency;
     };
 
-    string getName()
-    {
-        return name;
-    };
+    string getName() { return name; };
+    int getUpdateFrequency() { return updateFrequency; };
 
 protected:
     int tick;

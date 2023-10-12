@@ -18,7 +18,7 @@ using namespace std;
 class TextDataSaver : public RocketModule, public Actuator
 {
 public:
-    TextDataSaver(string _name, int _updateFrequency, string _directoryPath) : RocketModule(_name, _updateFrequency)
+    TextDataSaver(string _name, int _updateFrequency, string _directoryPath, string _fileNamePostfix) : RocketModule(_name, _updateFrequency)
     {
         directoryPath = _directoryPath;
 
@@ -30,7 +30,7 @@ public:
         strftime(time_string_char, sizeof(time_string_char), "%F@%H-%M-%S", tmp);
         string time_string(time_string_char);
 
-        dumpFilePath = directoryPath + '\\' + time_string;
+        dumpFilePath = directoryPath + '\\' + time_string + "_" + _fileNamePostfix;
         dumpFile.open(dumpFilePath);
     };
 
@@ -43,11 +43,10 @@ public:
         dumpFile << _line + '\n';
     }
 
-    int update(){};
+    int update() { return 0; };
 
 private:
-    string directoryPath;
-
     ofstream dumpFile;
     string dumpFilePath;
+    string directoryPath;
 };
