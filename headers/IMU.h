@@ -3,7 +3,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <fmt/core.h>
+
+// #include <fmt/core.h>
 
 #include "RocketModule.h"
 #include "Actuator.h"
@@ -49,8 +50,8 @@ public:
         // std::format and fmt format (std requires C++20)
         // format("{:.2f}", 3.14159265359); // s == "3.14"
 
-        string dumpString = fmt::format("{:.2f}", 3.14159265359);
-        textDataSaver->dumpLine(dumpString);
+        // string dumpString = std::format("{:.2f}", 3.14159265359);
+        // textDataSaver->dumpLine(dumpString);
 
 #pragma endregion
         return 0;
