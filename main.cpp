@@ -12,7 +12,7 @@ using namespace std;
 const string FLIGHT_LOGS_DIRECTORY = "/logs/flight logs";
 const string IMU_LOGS_DIRECTORY = "/logs/IMU logs";
 
-const int REFRESH_RATE = 256; // Hz
+const int REFRESH_RATE = 2048 * 8; // Hz
 const int MICROSECONDS_PER_SECOND = 1000000;
 
 int TICK_LENGTH_MICROSECONDS = -1;
@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
         ++tick;
     }
     t = clock() - t;
-    cout << tick << " ticks completed in " << t << " milliseconds (" << t / 1000.0 << " seconds)" << endl;
+    cout << tick << " ticks completed in " << t / 1000000.0 << " seconds" << endl;
 
     return 0;
 }
