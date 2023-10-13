@@ -20,16 +20,17 @@ public:
     string getName() { return name; };
     int getUpdateFrequency() { return updateFrequency; };
 
-protected:
-    int tick;
-    int updateFrequency;
-    string name;
     virtual int update()
     {
         cout << "default update" << endl;
 
         return 0;
     }
+
+protected:
+    int tick;
+    int updateFrequency;
+    string name;
 
 private:
 };

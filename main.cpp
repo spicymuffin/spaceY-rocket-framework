@@ -24,7 +24,7 @@ long long nextTickTimestamp = 0;
 bool ENDLESS = false;
 int TEST_DURATION = 10;
 
-vector<RocketModule> modules;
+vector<RocketModule *> modules;
 
 int main(int argc, char *argv[])
 {
@@ -64,15 +64,17 @@ int main(int argc, char *argv[])
 
 #pragma endregion
 
-#pragma region initialize rocket components
+#pragma region initialize rocket modules
 
     // init IMU data saver
     TextDataSaver IMUDataSaver = TextDataSaver("main IMU data saver", -1, cur_dir + IMU_LOGS_DIRECTORY, "mainIMU");
     cout << IMUDataSaver.getName() << " initialized." << endl;
+    modules.push_back(&IMUDataSaver);
 
     // init IMU
     IMU mainIMU = IMU("main IMU", 1, &IMUDataSaver, &mainClock);
     cout << mainIMU.getName() << " initialized." << endl;
+    modules.push_back(&mainIMU);
 
 #pragma endregion
 
@@ -99,7 +101,7 @@ int main(int argc, char *argv[])
 
         for (int i = 0; i < modules.size(); ++i)
         {
-            
+            modules[i]->update();
         }
 
         // profiling stuff

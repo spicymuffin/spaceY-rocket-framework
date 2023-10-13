@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <format>
+#include <fmt/core.h>
 
 #include "RocketModule.h"
 #include "Actuator.h"
@@ -46,11 +46,12 @@ public:
 #pragma region format and dump
         long long st = clock->getTimestamp();
 
-        // std::format
+        // std::format and fmt format (std requires C++20)
         // format("{:.2f}", 3.14159265359); // s == "3.14"
 
-        string dumpString = std::format("{:.2f}", 3.14159265359);
+        string dumpString = fmt::format("{:.2f}", 3.14159265359);
         textDataSaver->dumpLine(dumpString);
+
 #pragma endregion
         return 0;
     };
