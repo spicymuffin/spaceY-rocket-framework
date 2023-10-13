@@ -27,7 +27,7 @@ public:
         strftime(time_string_char, sizeof(time_string_char), "%F@%H-%M-%S", tmp);
         string time_string(time_string_char);
 
-        dumpFilePath = directoryPath + '\\' + time_string + '_' + _fileNamePostfix;
+        dumpFilePath = directoryPath + '/' + time_string + '_' + _fileNamePostfix;
         dumpFile.open(dumpFilePath);
 
         strftime(time_string_char, sizeof(time_string_char), "%c", tmp);
@@ -40,7 +40,7 @@ public:
 
     void dumpTickBuffer()
     {
-        for (int i = 0; i < tickBuffer.size(); i++)
+        for (int i = 0; i < static_cast<int>(tickBuffer.size()); i++)
         {
             // TODO: convert tickBuffer entries to strings
         }

@@ -30,7 +30,7 @@ public:
         strftime(time_string_char, sizeof(time_string_char), "%F@%H-%M-%S", tmp);
         string time_string(time_string_char);
 
-        dumpFilePath = directoryPath + '\\' + time_string + "_" + _fileNamePostfix;
+        dumpFilePath = directoryPath + '/' + time_string + "_" + _fileNamePostfix;
         dumpFile.open(dumpFilePath);
     };
 
