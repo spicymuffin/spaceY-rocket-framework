@@ -1,0 +1,8 @@
+[
+{
+  "directory": "C:/Users/luigi/Desktop/github/spaceY-rocket-framework/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe   -g -o CMakeFiles\\spaceY-rocket-framework.dir\\main.cpp.obj -c C:\\Users\\luigi\\Desktop\\github\\spaceY-rocket-framework\\main.cpp",
+  "file": "C:/Users/luigi/Desktop/github/spaceY-rocket-framework/main.cpp",
+  "output": "CMakeFiles/spaceY-rocket-framework.dir/main.cpp.obj"
+}
+]
