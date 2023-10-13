@@ -1,3 +1,0 @@
-"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\spaceY-rocket-framework.dir/objects.a
-C:\msys64\ucrt64\bin\ar.exe qc CMakeFiles\spaceY-rocket-framework.dir/objects.a @CMakeFiles\spaceY-rocket-framework.dir\objects1.rsp
-C:\msys64\ucrt64\bin\g++.exe -g -Wl,--whole-archive CMakeFiles\spaceY-rocket-framework.dir/objects.a -Wl,--no-whole-archive -o spaceY-rocket-framework.exe -Wl,--out-implib,libspaceY-rocket-framework.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\spaceY-rocket-framework.dir\linkLibs.rsp
