@@ -3,33 +3,59 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <format>
 
 #include "RocketModule.h"
 #include "Actuator.h"
 #include "TextDataSaver.h"
+#include "Clock.h"
 
 using namespace std;
 
-//TODO: these classes shouldn't cout anyting!
+// TODO: these classes shouldn't cout anyting!
 
 class IMU : public RocketModule, public Actuator
 {
 public:
-    IMU(string _name, int _updateFrequency, TextDataSaver *_textDataSaver) : RocketModule(_name, _updateFrequency)
+    struct IMUDataPack
+    {
+        double acc_x;
+        double acc_y;
+        double acc_z;
+
+        double ang_acc_x;
+        double ang_acc_y;
+        double ang_acc_z;
+    };
+
+    IMU(string _name, int _updateFrequency, TextDataSaver *_textDataSaver, Clock *_clock) : RocketModule(_name, _updateFrequency)
     {
         textDataSaver = _textDataSaver;
+        clock = _clock;
     };
 
     int update()
     {
         cout << name << " update" << endl;
 
-        //TODO: get data from IMU, parse, organize
+        // TODO: get data from IMU, parse, organize
 
-        textDataSaver->dumpLine("a");
+        IMUDataPack dataPack;
+        // blah blah blah, write to data pack
+
+#pragma region format and dump
+        long long st = clock->getTimestamp();
+
+        // std::format
+        // format("{:.2f}", 3.14159265359); // s == "3.14"
+
+        string dumpString = std::format("{:.2f}", 3.14159265359);
+        textDataSaver->dumpLine(dumpString);
+#pragma endregion
         return 0;
     };
 
 private:
     TextDataSaver *textDataSaver;
+    Clock *clock;
 };

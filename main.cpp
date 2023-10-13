@@ -11,16 +11,20 @@ using namespace std;
 const string FLIGHT_LOGS_DIRECTORY = "\\logs\\flight logs";
 const string IMU_LOGS_DIRECTORY = "\\logs\\IMU logs";
 
-const int REFRESH_RATE = 64; // Hz
+const int REFRESH_RATE = 256; // Hz
 const int MICROSECONDS_PER_SECOND = 1000000;
+
 int TICK_LENGTH_MICROSECONDS = -1;
+int TICK_REMINDER_MICROSECONDS = -1;
 
 unsigned int tick = 0;
-long long currentTimestamp = 0; // TODO: change to longs
+long long currentTickTimestamp = 0; // TODO: change to longs
 long long nextTickTimestamp = 0;
 
 bool ENDLESS = false;
-int TEST_DURATION = 60 * 60;
+int TEST_DURATION = 10;
+
+vector<RocketModule> modules;
 
 int main(int argc, char *argv[])
 {
@@ -31,6 +35,7 @@ int main(int argc, char *argv[])
     cout << "doing pre calculations..." << endl;
 
     TICK_LENGTH_MICROSECONDS = MICROSECONDS_PER_SECOND / REFRESH_RATE;
+    TICK_REMINDER_MICROSECONDS = MICROSECONDS_PER_SECOND % REFRESH_RATE;
 
 #pragma region figure out current directory
 
@@ -50,7 +55,7 @@ int main(int argc, char *argv[])
 #pragma region initialize rocket systems
 
     // init clock
-    Clock mainClock(&currentTimestamp);
+    Clock mainClock(&currentTickTimestamp);
     cout << "system clock initialized." << endl;
 
     // initialize flight log
@@ -66,15 +71,24 @@ int main(int argc, char *argv[])
     cout << IMUDataSaver.getName() << " initialized." << endl;
 
     // init IMU
-    IMU mainIMU = IMU("main IMU", 1, &IMUDataSaver);
+    IMU mainIMU = IMU("main IMU", 1, &IMUDataSaver, &mainClock);
     cout << mainIMU.getName() << " initialized." << endl;
 
 #pragma endregion
 
-    while (ENDLESS ? true : tick <= REFRESH_RATE * TEST_DURATION)
+    mainClock.update();
+    nextTickTimestamp = currentTickTimestamp;
+
+    while (ENDLESS ? true : tick <= REFRESH_RATE * TEST_DURATION - 1)
     {
         mainClock.update();
-        nextTickTimestamp = currentTimestamp + TICK_LENGTH_MICROSECONDS;
+        nextTickTimestamp += TICK_LENGTH_MICROSECONDS;
+
+        if (tick % REFRESH_RATE == 0) // mega precision, might make things slower for a very little amount of precision lol
+        {
+            nextTickTimestamp += TICK_REMINDER_MICROSECONDS;
+        }
+
         cout << "tick no. " << tick << endl;
 
         long long tickStartTimestamp;
@@ -83,7 +97,10 @@ int main(int argc, char *argv[])
         // profiling stuff
         tickStartTimestamp = mainClock.getTimestamp();
 
-        mainIMU.update();
+        for (int i = 0; i < modules.size(); ++i)
+        {
+            
+        }
 
         // profiling stuff
         tickEndTimestamp = mainClock.getTimestamp();
@@ -92,14 +109,14 @@ int main(int argc, char *argv[])
         cout << "waiting " << nextTickTimestamp - tickEndTimestamp << " microseconds to end of tick..." << endl;
 
         // exec completed, we need to wait
-        while (currentTimestamp < nextTickTimestamp)
+        while (currentTickTimestamp < nextTickTimestamp)
         {
             mainClock.update();
         }
         ++tick;
     }
     t = clock() - t;
-    cout << tick << " ticks completed in " << t << " milliseconds" << endl;
+    cout << tick << " ticks completed in " << t << " milliseconds (" << t / 1000.0 << " seconds)" << endl;
 
     return 0;
 }
