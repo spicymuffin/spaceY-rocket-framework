@@ -5,13 +5,14 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 using namespace std;
 
-const string FLIGHT_LOGS_DIRECTORY = "\\logs\\flight logs";
-const string IMU_LOGS_DIRECTORY = "\\logs\\IMU logs";
+const string FLIGHT_LOGS_DIRECTORY = "/logs/flight logs";
+const string IMU_LOGS_DIRECTORY = "/logs/IMU logs";
 
-const int REFRESH_RATE = 256; // Hz
+const int REFRESH_RATE = 2048 * 8; // Hz
 const int MICROSECONDS_PER_SECOND = 1000000;
 
 int TICK_LENGTH_MICROSECONDS = -1;
@@ -42,7 +43,7 @@ int main(int argc, char *argv[])
     std::string cur_dir(argv[0]);
     int pos = cur_dir.find_last_of("/\\");
     int i = cur_dir.length() - 1;
-    while (cur_dir[i] != '\\')
+    while (cur_dir[i] != '/')
     {
         cur_dir.pop_back();
         --i;
@@ -99,7 +100,7 @@ int main(int argc, char *argv[])
         // profiling stuff
         tickStartTimestamp = mainClock.getTimestamp();
 
-        for (int i = 0; i < modules.size(); ++i)
+        for (int i = 0; i < static_cast<int>(modules.size()); ++i)
         {
             modules[i]->update();
         }
@@ -118,7 +119,7 @@ int main(int argc, char *argv[])
         ++tick;
     }
     t = clock() - t;
-    cout << tick << " ticks completed in " << t << " milliseconds (" << t / 1000.0 << " seconds)" << endl;
+    cout << tick << " ticks completed in " << t / 1000000.0 << " seconds" << endl;
 
     return 0;
 }

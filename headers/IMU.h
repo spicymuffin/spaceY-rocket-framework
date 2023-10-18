@@ -5,7 +5,7 @@
 #include <vector>
 
 #define FMT_HEADER_ONLY
-#include "../fmt/core.h"
+#include <fmt/format.h>
 
 #include "RocketModule.h"
 #include "Actuator.h"
@@ -46,7 +46,7 @@ public:
         // blah blah blah, write to data pack
 
 #pragma region format and dump
-        long long st = clock->getTimestamp();
+        long long ts = clock->getTimestamp();
 
         // std::format and fmt format (std requires C++20)
         // format("{:.2f}", 3.14159265359); // s == "3.14"
