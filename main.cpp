@@ -1,7 +1,20 @@
-#include "./headers/RocketModule.h"
-#include "./headers/FlightLogger.h"
-#include "./headers/IMU.h"
-#include "./headers/Clock.h"
+/**
+ * @file main.cpp
+ * @author luigi (luigicussigh59@gmail.com)
+ * @brief spaceY's rocket control software
+ * @version 1.1
+ * @date 2023-11-20
+ *
+ * @copyright lol
+ *
+ *
+ * use sh build.sh to compile this file
+ */
+
+#include "./classes/RocketModule.h"
+#include "./classes/FlightLogger.h"
+#include "./classes/IMU.h"
+#include "./classes/Clock.h"
 
 #include <iostream>
 #include <string>
@@ -12,36 +25,49 @@ using namespace std;
 const string FLIGHT_LOGS_DIRECTORY = "/logs/flight logs";
 const string IMU_LOGS_DIRECTORY = "/logs/IMU logs";
 
-const int REFRESH_RATE = 2048 * 8; // Hz
+const int REFRESH_RATE = 64; // in Hz
 const int MICROSECONDS_PER_SECOND = 1000000;
 
+// calculated at runtime
 int TICK_LENGTH_MICROSECONDS = -1;
 int TICK_REMINDER_MICROSECONDS = -1;
 
+// tick of rocket
 unsigned int tick = 0;
+
+// current tick's start's timestamp
 long long currentTickTimestamp = 0; // TODO: change to longs
+// next tick's start's timestamp
 long long nextTickTimestamp = 0;
 
+// if set to true the main loop will run endlessly
 bool ENDLESS = false;
-int TEST_DURATION = 10;
+
+// if [ENDLESS] is set to false main loop will run for [TEST_DURATION] seconds
+unsigned int TEST_DURATION = 4;
 
 vector<RocketModule *> modules;
 
 int main(int argc, char *argv[])
 {
+    // clock object used for debugging puroses
     clock_t t;
     t = clock();
+
+    // debug msgs
     cout << "initializing rocket.." << endl;
 
     cout << "doing pre calculations..." << endl;
 
+    // calculate lengths
     TICK_LENGTH_MICROSECONDS = MICROSECONDS_PER_SECOND / REFRESH_RATE;
     TICK_REMINDER_MICROSECONDS = MICROSECONDS_PER_SECOND % REFRESH_RATE;
 
 #pragma region figure out current directory
 
+    // figure out working directory (linux)
     std::string cur_dir(argv[0]);
-    int pos = cur_dir.find_last_of("/\\");
+    // int pos = cur_dir.find_last_of("/\\");
     int i = cur_dir.length() - 1;
     while (cur_dir[i] != '/')
     {
@@ -79,19 +105,24 @@ int main(int argc, char *argv[])
 
 #pragma endregion
 
+    // updating main clock sets [currentTickTimestamp] to current timestamp.
     mainClock.update();
+    // init this variable
     nextTickTimestamp = currentTickTimestamp;
 
     while (ENDLESS ? true : tick <= REFRESH_RATE * TEST_DURATION - 1)
     {
+        // record this tick's start's timestamp
         mainClock.update();
+        // calculate when next tick should start
         nextTickTimestamp += TICK_LENGTH_MICROSECONDS;
 
-        if (tick % REFRESH_RATE == 0) // mega precision, might make things slower for a very little amount of precision lol
+        if (tick % REFRESH_RATE == 0)
         {
             nextTickTimestamp += TICK_REMINDER_MICROSECONDS;
         }
 
+        // debug stuff
         cout << "tick no. " << tick << endl;
 
         long long tickStartTimestamp;
@@ -100,9 +131,12 @@ int main(int argc, char *argv[])
         // profiling stuff
         tickStartTimestamp = mainClock.getTimestamp();
 
+        // update all rocket modules f they need to be updated
         for (int i = 0; i < static_cast<int>(modules.size()); ++i)
         {
-            modules[i]->update();
+            if (tick % modules[i]->getUpdateFrequency() == 0){
+                modules[i]->update();
+            }
         }
 
         // profiling stuff
@@ -118,6 +152,8 @@ int main(int argc, char *argv[])
         }
         ++tick;
     }
+
+    // measure execution time
     t = clock() - t;
     cout << tick << " ticks completed in " << t / 1000000.0 << " seconds" << endl;
 
