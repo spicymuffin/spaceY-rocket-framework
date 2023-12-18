@@ -8,13 +8,13 @@
  * @copyright lol
  *
  *
- * use sh build.sh to compile this file
+ * use makefile to build this crap
  */
 
-#include "./classes/RocketModule.h"
-#include "./classes/FlightLogger.h"
-#include "./classes/IMU.h"
-#include "./classes/Clock.h"
+#include "RocketModule.h"
+#include "FlightLogger.h"
+#include "IMU.h"
+#include "Clock.h"
 
 #include <iostream>
 #include <string>
@@ -22,8 +22,8 @@
 
 using namespace std;
 
-const string FLIGHT_LOGS_DIRECTORY = "/logs/flight logs";
-const string IMU_LOGS_DIRECTORY = "/logs/IMU logs";
+const string FLIGHT_LOGS_DIRECTORY = "/data/flight logs";
+const string IMU_LOGS_DIRECTORY = "/data/IMU logs";
 
 const int REFRESH_RATE = 64; // in Hz
 const int MICROSECONDS_PER_SECOND = 1000000;
