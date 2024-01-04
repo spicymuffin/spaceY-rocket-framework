@@ -1,14 +1,11 @@
-#pragma once
-
 #include <iostream>
 #include <string>
 #include <vector>
 
 using namespace std;
 
-class Rocket
+#include "Sensor.h"
+
+Sensor::Sensor()
 {
-public:
-protected:
-private:
-};
+}

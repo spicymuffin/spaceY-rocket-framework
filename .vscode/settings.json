@@ -3,6 +3,8 @@
         "*.py": "python",
         "*.tcc": "cpp",
         "fstream": "cpp",
+        "iostream": "cpp",
+        "chrono": "cpp",
         "xstring": "cpp",
         "vector": "cpp",
         "cstddef": "cpp"

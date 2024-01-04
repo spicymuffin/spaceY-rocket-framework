@@ -35,7 +35,11 @@ int main(int argc, char *argv[])
 
     cout2Darr(arr, 2, 2);
 
+    a = 10;
+
     pointer_test(&a);
 
     cout << "test" << endl;
+
+    return 0;
 }
