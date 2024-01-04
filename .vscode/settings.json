@@ -2,7 +2,10 @@
     "files.associations": {
         "*.py": "python",
         "*.tcc": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "xstring": "cpp",
+        "vector": "cpp",
+        "cstddef": "cpp"
     },
     "C_Cpp.default.compilerPath": "/usr/bin/g++"
 }
