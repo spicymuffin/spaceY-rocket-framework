@@ -81,5 +81,36 @@ int main(int argc, char *argv[])
 
 // Rocket class
 // comms module(s) (rocket system) - has interface to all RocketComponents
-// every rocketcomponent has an interface that is accessible through comms component
+// every RocketModule has an interface that is accessible through comms component
+//
+// every communicationsystem assigns a byte to each rocketmodule to encode
+// a number (0-255) which signifies which module is this command assigned to
 
+// communication standard:
+//
+// BYTE 0: action identfier-byte (0-255)
+// x00 - establisComms (initializer handshake)
+// x01 - ping
+// x02 - data transfer complete ACK
+// x03 - communicate with module
+
+// x00
+// arguments encodes length of greetstring (?)
+
+// x01
+// encode timestamp
+
+// x02
+// something about the size of the transferred data.
+
+// x03
+// 1 byte command identifier
+// encodes 256 commands
+//
+// 2-3 command argc bytes (0-65536)
+// unsigned short int
+//
+// arguments encoded:
+// datatype signifier byte -> data
+// some datatypes dont have a fixed amount of bytes,
+// must be ended manually within datatype.

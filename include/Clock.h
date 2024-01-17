@@ -32,6 +32,12 @@ public:
      *
      * @return long long current timestamp
      */
+    long long getNewTimestamp();
+    /**
+     * @brief get the most recent timestamp
+     *
+     * @return long long most recent timestamp
+     */
     long long getTimestamp();
     /**
      * @brief updates *updateTimestampTarget to current timestamp

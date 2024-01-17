@@ -5,12 +5,21 @@
             "label": "C/C++: g++ build active file",
             "command": "/usr/bin/g++",
             "args": [
+                "src/Actuator.cpp",
+                "src/Clock.cpp",
+                "src/CommunicationSystem.cpp",
+                "src/FlightLogger.cpp",
+                "src/IMU.cpp",
+                "src/Rocket.cpp",
+                "src/RocketModule.cpp",
+                "src/Sensor.cpp",
+                "src/TextDataSaver.cpp",
                 "-fdiagnostics-color=always",
                 "-g",
                 "${file}",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}",
-                "-I include"
+                "-Iinclude"
             ],
             "options": {
                 "cwd": "${fileDirname}"

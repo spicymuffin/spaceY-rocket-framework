@@ -15,6 +15,7 @@
 #include "FlightLogger.h"
 #include "IMU.h"
 #include "Clock.h"
+#include "CommunicationSystem.h"
 
 #include <iostream>
 #include <string>
@@ -25,7 +26,9 @@ using namespace std;
 const string FLIGHT_LOGS_DIRECTORY = "/data/flight logs";
 const string IMU_LOGS_DIRECTORY = "/data/IMU logs";
 
-const int REFRESH_RATE = 64; // in Hz
+const string COMMUNICATION_PROTOCOL_PATH = "/communication_protocols/mainprotocol.json";
+
+const int REFRESH_RATE = 1024; // in Hz
 const int MICROSECONDS_PER_SECOND = 1000000;
 
 // calculated at runtime
@@ -44,7 +47,7 @@ long long nextTickTimestamp = 0;
 bool ENDLESS = false;
 
 // if [ENDLESS] is set to false main loop will run for [TEST_DURATION] seconds
-unsigned int TEST_DURATION = 4;
+unsigned int TEST_DURATION = 10;
 
 vector<RocketModule *> modules;
 
@@ -67,6 +70,7 @@ int main(int argc, char *argv[])
 
     // figure out working directory (linux)
     std::string cur_dir(argv[0]);
+
     // int pos = cur_dir.find_last_of("/\\");
     int i = cur_dir.length() - 1;
     while (cur_dir[i] != '/')
@@ -105,6 +109,14 @@ int main(int argc, char *argv[])
 
 #pragma endregion
 
+#pragma region intialize communication systems
+
+    vector<RocketModule *> mainCommuniationSystem_Modules = {};
+    // init main Communication System
+    CommunicationSystem mainCommunicationSystem = CommunicationSystem("main communication system", 10, mainCommuniationSystem_Modules, cur_dir + COMMUNICATION_PROTOCOL_PATH);
+
+#pragma endregion
+
     // updating main clock sets [currentTickTimestamp] to current timestamp.
     mainClock.update();
     // init this variable
@@ -129,18 +141,23 @@ int main(int argc, char *argv[])
         long long tickEndTimestamp;
 
         // profiling stuff
-        tickStartTimestamp = mainClock.getTimestamp();
+        tickStartTimestamp = mainClock.getNewTimestamp();
 
-        // update all rocket modules f they need to be updated
+        /// TODO: update CommunicationSystem
+
+        mainCommunicationSystem.update();
+
+        // update all rocket modules if they need to be updated
         for (int i = 0; i < static_cast<int>(modules.size()); ++i)
         {
-            if (tick % modules[i]->getUpdateFrequency() == 0){
+            if (tick % modules[i]->getUpdateFrequency() == 0)
+            {
                 modules[i]->update();
             }
         }
 
         // profiling stuff
-        tickEndTimestamp = mainClock.getTimestamp();
+        tickEndTimestamp = mainClock.getNewTimestamp();
 
         cout << "execution completed in " << tickEndTimestamp - tickStartTimestamp << " microseconds (" << (float)(tickEndTimestamp - tickStartTimestamp) / (float)TICK_LENGTH_MICROSECONDS * 100 << "% of time used)" << endl;
         cout << "waiting " << nextTickTimestamp - tickEndTimestamp << " microseconds to end of tick..." << endl;

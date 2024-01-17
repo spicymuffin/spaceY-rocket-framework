@@ -16,6 +16,7 @@ SRC_DIR     := src
 OBJ_DIR     := obj
 SRCS        := \
 	../main.cpp			\
+	CommunicationSystem.cpp \
 	Actuator.cpp		\
 	Clock.cpp	        \
 	FlightLogger.cpp    \

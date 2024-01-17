@@ -38,7 +38,7 @@ public:
 
     /**
      * @brief
-     * // TODO: dump buffer into file
+     * does nothing currently (textDataSavers should be updated manually)
      * @return int update status
      */
     int update() { return 0; };

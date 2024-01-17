@@ -12,6 +12,7 @@
 #include "Sensor.h"
 #include "TextDataSaver.h"
 #include "Clock.h"
+#include "ParachuteController.h"
 
 using namespace std;
 
