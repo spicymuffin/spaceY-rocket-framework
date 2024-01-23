@@ -1,5 +1,5 @@
-#ifndef Rocket_H
-#define Rocket_H
+#ifndef ROCKET_H
+#define ROCKET_H
 
 #include <iostream>
 #include <string>

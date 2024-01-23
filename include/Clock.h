@@ -1,5 +1,5 @@
-#ifndef Clock_H
-#define Clock_H
+#ifndef CLOCK_H
+#define CLOCK_H
 
 #include <iostream>
 #include <string>

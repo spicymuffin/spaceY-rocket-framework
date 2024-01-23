@@ -27,12 +27,4 @@ private:
     string communicationProtocolPath;
 };
 
-class ByteSeqInterpreter
-{
-public:
-    int interpret(string a);
-
-private:
-};
-
 #endif

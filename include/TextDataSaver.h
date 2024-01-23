@@ -1,5 +1,5 @@
-#ifndef TextDataSaver_H
-#define TextDataSaver_H
+#ifndef TEXTDATASAVER_H
+#define TEXTDATASAVER_H
 
 #include <iostream>
 #include <string>

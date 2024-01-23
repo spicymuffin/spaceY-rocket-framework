@@ -1,5 +1,5 @@
-#ifndef Actuator_H
-#define Actuator_H
+#ifndef ACTUATOR_H
+#define ACTUATOR_H
 
 #include <iostream>
 #include <string>

@@ -1,5 +1,5 @@
-#ifndef FlightLogger_H
-#define FlightLogger_H
+#ifndef FLIGHTLOGGER_H
+#define FLIGHTLOGGER_H
 
 #include <iostream>
 #include <string>

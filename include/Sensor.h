@@ -1,5 +1,5 @@
-#ifndef Sensor_H
-#define Sensor_H
+#ifndef SENSOR_H
+#define SENSOR_H
 
 #include <iostream>
 #include <string>

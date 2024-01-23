@@ -8,9 +8,13 @@
 #include "RocketModule.h"
 #include "Actuator.h"
 
-class FuelCellIgniter : RocketModule, Actuator
+class FuelCellIgniter : public RocketModule, public Actuator
 {
 public:
+    FuelCellIgniter(string _name, int _updateFrequency);
+    void ignite();
+    int update() { return 0; }
+
 private:
 };
 
