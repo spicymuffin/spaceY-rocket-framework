@@ -19,7 +19,6 @@ class Sensor
 {
 public:
     Sensor();
-
 protected:
 private:
 };

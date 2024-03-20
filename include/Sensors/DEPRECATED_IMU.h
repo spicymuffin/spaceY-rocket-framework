@@ -5,9 +5,6 @@
 #include <string>
 #include <vector>
 
-#define FMT_HEADER_ONLY
-#include <fmt/format.h>
-
 #include "RocketModule.h"
 #include "Sensor.h"
 #include "TextDataSaver.h"

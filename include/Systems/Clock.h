@@ -4,12 +4,16 @@
 #include <iostream>
 #include <string>
 #include <vector>
+/// TODO: switch to pico libraries
 #include <chrono>
+
+
+// DEPRECATED BC OF CHANGE TO MICROCONTROLLER (next 5 lines)
 
 // typeid map https://codeforces.com/blog/entry/16101
 // ex): typeid(currentTimestampInt).name()
 
-#include <typeinfo>
+// #include <typeinfo>
 
 using namespace std;
 

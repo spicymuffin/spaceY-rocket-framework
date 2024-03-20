@@ -1,0 +1,20 @@
+rewrite existing codebase to match new hardware
+    stuff that probably wont work:
+        clock:
+            investigate microsecond timers
+        data storage:
+            pending, depends on selected data storage method
+            (probably usb: use this library https://github.com/rppicomidi/pico-usb-host-msc-demo)
+        misc coding stuff:
+            utility:
+                strftime, format all dont work, rewrite libs from the ground up for utility
+            io and debugging:
+                iostream doenst work, find new ways to write data
+        comms:
+            1: (use old comms module) send stuff, through uart, it just works out of the box basically
+            2: (use new comms module) need to write new library ig
+        sensors:
+            accel, gyro, ang accel, temp, altimeter
+        motors:
+            servo: parachute open on
+
