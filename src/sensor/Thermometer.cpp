@@ -4,10 +4,10 @@
 
 using namespace std;
 
-#include "RocketModule.h"
-#include "Actuator.h"
-#include "TextDataSaver.h"
-#include "Clock.h"
+#include "base_class/RocketModule.h"
+#include "base_class/Actuator.h"
+#include "actuator/TextDataSaver.h"
+#include "system/Clock.h"
 
 #include "Thermometer.h"
 

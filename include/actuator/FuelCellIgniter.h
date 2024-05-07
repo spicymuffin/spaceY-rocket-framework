@@ -5,8 +5,8 @@
 #include <string>
 #include <vector>
 
-#include "RocketModule.h"
-#include "Actuator.h"
+#include "base_class/RocketModule.h"
+#include "base_class/Actuator.h"
 
 class FuelCellIgniter : public RocketModule, public Actuator
 {

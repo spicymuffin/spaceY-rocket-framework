@@ -4,7 +4,7 @@
 
 using namespace std;
 
-#include "RocketModule.h"
+#include "base_class/RocketModule.h"
 
 string RocketModule::getName() { return name; };
 int RocketModule::getUpdateFrequency() const { return updateFrequency; };

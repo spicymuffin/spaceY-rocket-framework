@@ -1,11 +1,13 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.13)
 
-# Pull in SDK (must be before project)
+# pull in SDK (must be before project)
+message(STATUS "importing pico sdk: $ENV{PICO_SDK_PATH}\\external\\pico_sdk_import.cmake")
 include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
-
+message(STATUS "importing pico extras: $ENV{PICO_EXTRAS_PATH}\\external\\pico_extras_import.cmake")
 include($ENV{PICO_EXTRAS_PATH}/external/pico_extras_import.cmake)
 
-project(test C CXX ASM)
+# initialize project
+project(spaceY-RFW C CXX ASM)
 
 # set standards
 set(CMAKE_C_STANDARD 11)
@@ -17,7 +19,7 @@ endif()
 
 #set(PICO_EXAMPLES_PATH ${PROJECT_SOURCE_DIR})
 
-# Initialize the SDK
+# initialize the SDK
 pico_sdk_init()
 
 
@@ -31,14 +33,13 @@ if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
     add_compile_options(-Wno-maybe-uninitialized)
 endif()
 
-
 add_executable(${PROJECT_NAME} main.cpp)
 
-pico_enable_stdio_usb(test 1)
-pico_enable_stdio_uart(test 1)
+# pull in includes
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(spaceY-RFW pico_stdlib hardware_gpio)
 
+pico_enable_stdio_usb(spaceY-RFW 1)
+pico_enable_stdio_uart(spaceY-RFW 1)
 
-pico_add_extra_outputs(test)
-
-
-target_link_libraries(test pico_stdlib hardware_gpio)
+pico_add_extra_outputs(spaceY-RFW)

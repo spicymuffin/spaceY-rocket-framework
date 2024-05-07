@@ -2,8 +2,8 @@
 #include <string>
 #include <vector>
 
-#include <RocketModule.h>
-#include <CommunicationSystem.h>
+#include "system/base_class/RocketModule.h"
+#include "system/CommunicationSystem.h"
 
 using namespace std;
 

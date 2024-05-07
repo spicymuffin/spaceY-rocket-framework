@@ -8,34 +8,34 @@
  * @copyright lol
  *
  *
- * use makefile to build this crap
+ * use cmake to build this crap
  */
 
+
+// base classes
+#include "base_class/RocketModule.h"
+
 // systems
-#include "RocketModule.h"
-#include "FlightLogger.h"
-#include "Clock.h"
-#include "CommunicationSystem.h"
+#include "system/FlightLogger.h"
+#include "system/Clock.h"
+#include "system/CommunicationSystem.h"
 
 // HardwareLinks
-#include "HardwareLink_bosch.h"
-#include "HardwareLink_fuelcelligniter.h"
-#include "HardwareLink_onboard_led.h"
-#include "HardwareLink_servo_x.h"
-#include "HardwareLink_usb.h"
+#include "hardware_link/HardwareLink_mpu6050.h"
+#include "hardware_link/HardwareLink_fuelcelligniter.h"
+#include "hardware_link/HardwareLink_onboard_led.h"
+#include "hardware_link/HardwareLink_servo_x.h"
+#include "hardware_link/HardwareLink_usb.h"
 
-// dependencies
-#include <iostream>
-#include <string>
-#include <vector>
+#include <string.h>
 
 using namespace std;
 
 // constants
-// const string FLIGHT_LOGS_DIRECTORY = "/data/flight logs";
-// const string IMU_LOGS_DIRECTORY = "/data/IMU logs";
+const string FLIGHT_LOGS_DIRECTORY = "/data/flight logs";
+const string IMU_LOGS_DIRECTORY = "/data/IMU logs";
 
-// const string COMMUNICATION_PROTOCOL_PATH = "/communication_protocols/mainprotocol.json";
+const string COMMUNICATION_PROTOCOL_PATH = "/communication_protocols/mainprotocol.json";
 
 const int REFRESH_RATE = 1024; // in Hz
 const int MICROSECONDS_PER_SECOND = 1000000;
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
     }
     cur_dir.pop_back();
     cout << "working directory: " << cur_dir << endl;
-    
+
 #pragma endregion
 
 #pragma region initialize rocket systems
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 
 #pragma region initialize hardware
 
-/// TODO: initialize hardware
+    /// TODO: initialize hardware
 
 #pragma endregion
 

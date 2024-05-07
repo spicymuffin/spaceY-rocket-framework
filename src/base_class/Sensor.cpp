@@ -4,9 +4,8 @@
 
 using namespace std;
 
-#include "Actuator.h"
+#include "base_class/Sensor.h"
 
-Actuator::Actuator()
+Sensor::Sensor()
 {
-    // empty for now, might need later
 }

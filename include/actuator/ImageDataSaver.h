@@ -7,8 +7,8 @@
 #include <fstream>
 #include <ctime>
 
-#include "RocketModule.h"
-#include "Actuator.h"
+#include "base_class/RocketModule.h"
+#include "base_class/Actuator.h"
 
 using namespace std;
 

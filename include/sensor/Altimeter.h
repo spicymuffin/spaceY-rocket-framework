@@ -5,10 +5,10 @@
 #include <string>
 #include <vector>
 
-#include "RocketModule.h"
-#include "Sensor.h"
-#include "TextDataSaver.h"
-#include "Clock.h"
+#include "base_class/RocketModule.h"
+#include "base_class/Sensor.h"
+#include "actuator/TextDataSaver.h"
+#include "system/Clock.h"
 
 using namespace std;
 

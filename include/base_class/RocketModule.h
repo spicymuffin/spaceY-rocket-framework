@@ -1,11 +1,8 @@
 #ifndef ROCKETMODULE_H
 #define ROCKETMODULE_H
 
-#include <iostream>
-#include <string>
-#include <vector>
+#include <string.h>
 
-using namespace std;
 /**
  * @brief
  * rocket module base class. all rocket's modules that are not crucial to the
