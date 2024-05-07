@@ -11,22 +11,31 @@
  * use makefile to build this crap
  */
 
+// systems
 #include "RocketModule.h"
 #include "FlightLogger.h"
-#include "IMU.h"
 #include "Clock.h"
 #include "CommunicationSystem.h"
 
+// HardwareLinks
+#include "HardwareLink_bosch.h"
+#include "HardwareLink_fuelcelligniter.h"
+#include "HardwareLink_onboard_led.h"
+#include "HardwareLink_servo_x.h"
+#include "HardwareLink_usb.h"
+
+// dependencies
 #include <iostream>
 #include <string>
 #include <vector>
 
 using namespace std;
 
-const string FLIGHT_LOGS_DIRECTORY = "/data/flight logs";
-const string IMU_LOGS_DIRECTORY = "/data/IMU logs";
+// constants
+// const string FLIGHT_LOGS_DIRECTORY = "/data/flight logs";
+// const string IMU_LOGS_DIRECTORY = "/data/IMU logs";
 
-const string COMMUNICATION_PROTOCOL_PATH = "/communication_protocols/mainprotocol.json";
+// const string COMMUNICATION_PROTOCOL_PATH = "/communication_protocols/mainprotocol.json";
 
 const int REFRESH_RATE = 1024; // in Hz
 const int MICROSECONDS_PER_SECOND = 1000000;
@@ -53,10 +62,6 @@ vector<RocketModule *> modules;
 
 int main(int argc, char *argv[])
 {
-    // clock object used for debugging puroses
-    clock_t t;
-    t = clock();
-
     // debug msgs
     cout << "initializing rocket.." << endl;
 
@@ -80,7 +85,7 @@ int main(int argc, char *argv[])
     }
     cur_dir.pop_back();
     cout << "working directory: " << cur_dir << endl;
-
+    
 #pragma endregion
 
 #pragma region initialize rocket systems
@@ -95,17 +100,9 @@ int main(int argc, char *argv[])
 
 #pragma endregion
 
-#pragma region initialize rocket modules
+#pragma region initialize hardware
 
-    // init IMU data saver
-    TextDataSaver IMUDataSaver = TextDataSaver("main IMU data saver", -1, cur_dir + IMU_LOGS_DIRECTORY, "mainIMU");
-    cout << IMUDataSaver.getName() << " initialized." << endl;
-    modules.push_back(&IMUDataSaver);
-
-    // init IMU
-    IMU mainIMU = IMU("main IMU", 1, &IMUDataSaver, &mainClock);
-    cout << mainIMU.getName() << " initialized." << endl;
-    modules.push_back(&mainIMU);
+/// TODO: initialize hardware
 
 #pragma endregion
 
@@ -169,10 +166,6 @@ int main(int argc, char *argv[])
         }
         ++tick;
     }
-
-    // measure execution time
-    t = clock() - t;
-    cout << tick << " ticks completed in " << t / 1000000.0 << " seconds" << endl;
 
     return 0;
 }

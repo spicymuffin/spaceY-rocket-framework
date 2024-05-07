@@ -12,20 +12,20 @@
 
 using namespace std;
 
+/**
+ * @brief
+ * contains Acceleromter data
+ */
+struct AccelerometerDataPack
+{
+    double acc_x;
+    double acc_y;
+    double acc_z;
+};
+
 class Accelerometer : public RocketModule, public Sensor
 {
 public:
-    /**
-     * @brief
-     * contains Acceleromter data
-     */
-    struct AccelerometerDataPack
-    {
-        double acc_x;
-        double acc_y;
-        double acc_z;
-    };
-
     /**
      * @brief Construct a new Accelerometer object
      *
