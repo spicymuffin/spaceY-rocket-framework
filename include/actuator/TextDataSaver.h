@@ -1,16 +1,8 @@
 #ifndef TEXTDATASAVER_H
 #define TEXTDATASAVER_H
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <fstream>
-#include <ctime>
-
 #include "base_class/RocketModule.h"
 #include "base_class/Actuator.h"
-
-using namespace std;
 
 /**
  * @brief
@@ -27,14 +19,14 @@ public:
      * @param _directoryPath text data's destination txt file path
      * @param _fileNamePostfix text data's filename postfix
      */
-    TextDataSaver(string _name, int _updateFrequency, string _directoryPath, string _fileNamePostfix);
+    TextDataSaver(char* _name, int _updateFrequency, char* _directoryPath, char* _fileNamePostfix);
 
     /**
      * @brief
      * dumps line to file. (write to memory immediately)
      * @param _line
      */
-    void dumpLine(string _line);
+    void dumpLine(char* _line);
 
     /**
      * @brief
@@ -45,8 +37,8 @@ public:
 
 private:
     ofstream dumpFile;
-    string dumpFilePath;
-    string directoryPath;
+    char* dumpFilePath;
+    char* directoryPath;
 };
 
 #endif

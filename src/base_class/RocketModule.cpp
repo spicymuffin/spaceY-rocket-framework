@@ -1,15 +1,11 @@
-#include <iostream>
-#include <string>
-#include <vector>
-
-using namespace std;
-
 #include "base_class/RocketModule.h"
 
-string RocketModule::getName() { return name; };
+#include "string.h"
+
+char* RocketModule::getName() { return name; };
 int RocketModule::getUpdateFrequency() const { return updateFrequency; };
 
-RocketModule::RocketModule(string _name, int _updateFrequency)
+RocketModule::RocketModule(char* _name, int _updateFrequency)
 {
     name = _name;
     updateFrequency = _updateFrequency;
@@ -17,7 +13,7 @@ RocketModule::RocketModule(string _name, int _updateFrequency)
 
 int RocketModule::update()
 {
-    cout << "default update" << endl;
+    printf("default update\n");
 
     return 0;
 }

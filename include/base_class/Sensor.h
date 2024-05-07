@@ -1,12 +1,6 @@
 #ifndef SENSOR_H
 #define SENSOR_H
 
-#include <iostream>
-#include <string>
-#include <vector>
-
-using namespace std;
-
 /**
  * @brief
  * base class for sensors. sensors are rocket modules that record data.
@@ -19,6 +13,7 @@ class Sensor
 {
 public:
     Sensor();
+
 protected:
 private:
 };

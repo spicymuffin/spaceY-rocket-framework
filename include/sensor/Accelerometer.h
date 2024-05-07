@@ -1,16 +1,10 @@
 #ifndef ACCELEROMETER_H
 #define ACCELEROMETER_H
 
-#include <iostream>
-#include <string>
-#include <vector>
-
 #include "base_class/RocketModule.h"
 #include "base_class/Sensor.h"
 #include "actuator/TextDataSaver.h"
 #include "system/Clock.h"
-
-using namespace std;
 
 /**
  * @brief
@@ -34,7 +28,7 @@ public:
      * @param _textDataSaver Accelerometer's data storer (pointer to a TextDataSaver)
      * @param _clock pointer to a Clock object to get timestamps for datapacks
      */
-    Accelerometer(string _name, int _updateFrequency, TextDataSaver *_textDataSaver, Clock *_clock);
+    Accelerometer(char* _name, int _updateFrequency, TextDataSaver *_textDataSaver, Clock *_clock);
 
     /**
      * @brief

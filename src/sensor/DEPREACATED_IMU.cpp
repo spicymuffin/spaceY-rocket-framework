@@ -1,18 +1,7 @@
-#include <iostream>
-#include <string>
-#include <vector>
-
-using namespace std;
-
-#define FMT_HEADER_ONLY
-#include <fmt/format.h>
-
 #include "base_class/RocketModule.h"
 #include "base_class/Actuator.h"
 #include "actuator/TextDataSaver.h"
 #include "system/Clock.h"
-
-#include "IMU.h"
 
 IMU::IMU(string _name, int _updateFrequency, TextDataSaver *_textDataSaver, Clock *_clock) : RocketModule(_name, _updateFrequency)
 {
@@ -22,7 +11,7 @@ IMU::IMU(string _name, int _updateFrequency, TextDataSaver *_textDataSaver, Cloc
 
 int IMU::update()
 {
-    cout << name << " update" << endl;
+    printf(name << " update");
 
     // TODO: get data from IMU, parse, organize
 

@@ -1,16 +1,10 @@
 #ifndef ALTIMETER_H
 #define ALTIMETER_H
 
-#include <iostream>
-#include <string>
-#include <vector>
-
 #include "base_class/RocketModule.h"
 #include "base_class/Sensor.h"
 #include "actuator/TextDataSaver.h"
 #include "system/Clock.h"
-
-using namespace std;
 
 class Altimeter : public RocketModule, public Sensor
 {
@@ -32,7 +26,7 @@ public:
      * @param _textDataSaver Altimeter's data storer (pointer to a TextDataSaver)
      * @param _clock pointer to a Clock object to get timestamps for datapacks
      */
-    Altimeter(string _name, int _updateFrequency, TextDataSaver *_textDataSaver, Clock *_clock);
+    Altimeter(char* _name, int _updateFrequency, TextDataSaver *_textDataSaver, Clock *_clock);
 
     /**
      * @brief

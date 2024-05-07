@@ -1,15 +1,9 @@
-#include <iostream>
-#include <string>
-#include <vector>
-
-using namespace std;
-
 #include "system/Clock.h"
 
 Clock::Clock(long long *_updateTimestampTarget) : updateTimestampTarget(_updateTimestampTarget){};
 
 long long Clock::getNewTimestamp()
-{ 
+{
     currentTimestamp = chrono::high_resolution_clock::now();
     auto now_microseconds = std::chrono::time_point_cast<std::chrono::microseconds>(currentTimestamp);
     currentTimestampInt = now_microseconds.time_since_epoch().count();

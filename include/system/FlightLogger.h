@@ -1,14 +1,6 @@
 #ifndef FLIGHTLOGGER_H
 #define FLIGHTLOGGER_H
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <fstream>
-#include <ctime>
-
-using namespace std;
-
 /**
  * @brief
  * flightlogger. creates logs, that contain data abt the rocket's state changes and
@@ -26,7 +18,7 @@ public:
     struct actionEntry
     {
         int timestamp;
-        string content;
+        char* content;
     };
 
     /**
@@ -37,7 +29,7 @@ public:
     struct moduleTickLog
     {
         int tickNumber;
-        string moduleName;
+        char* moduleName;
         vector<actionEntry> buffer;
     };
 
@@ -48,14 +40,14 @@ public:
      * @param _directoryPath path to flight logs directory
      * @param _fileNamePostfix filename postfix
      */
-    FlightLogger(string _name, string _directoryPath, string _fileNamePostfix);
+    FlightLogger(char* _name, char* _directoryPath, char* _fileNamePostfix);
 
     /**
      * @brief Get the name of the flight logger object
      *
-     * @return string the name of the flight logger object
+     * @return char* the name of the flight logger object
      */
-    string getName();
+    char* getName();
 
     /**
      * @brief dumps buffer contents generated during this tick to a file
@@ -72,11 +64,11 @@ public:
 
 private:
     ofstream dumpFile;
-    string dumpFilePath;
-    string directoryPath;
+    char* dumpFilePath;
+    char* directoryPath;
 
     vector<moduleTickLog> tickBuffer;
-    string name;
+    char* name;
 };
 
 #endif

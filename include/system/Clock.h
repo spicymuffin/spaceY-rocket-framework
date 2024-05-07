@@ -1,19 +1,9 @@
 #ifndef CLOCK_H
 #define CLOCK_H
 
-#include <iostream>
-#include <string>
-#include <vector>
-/// TODO: switch to pico libraries
-#include <chrono>
-
 // DEPRECATED BC OF CHANGE TO MICROCONTROLLER (next 4 lines)
 // typeid map https://codeforces.com/blog/entry/16101
 // ex): typeid(currentTimestampInt).name()
-
-// #include <typeinfo>
-
-using namespace std;
 
 /**
  * @brief

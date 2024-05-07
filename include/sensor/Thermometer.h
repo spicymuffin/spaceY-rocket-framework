@@ -1,16 +1,10 @@
 #ifndef THERMOMETER_H
 #define THERMOMETER_H
 
-#include <iostream>
-#include <string>
-#include <vector>
-
 #include "base_class/RocketModule.h"
 #include "base_class/Sensor.h"
 #include "actuator/TextDataSaver.h"
 #include "system/Clock.h"
-
-using namespace std;
 
 class Thermometer : public RocketModule, public Sensor
 {
@@ -24,7 +18,7 @@ public:
      * @param _clock pointer to a Clock object to get timestamps for datapacks
      * @param _getNewReading HardwareLink function that
      */
-    Thermometer(string _name,
+    Thermometer(char* _name,
                 int _updateFrequency,
                 TextDataSaver *_textDataSaver,
                 Clock *_clock,

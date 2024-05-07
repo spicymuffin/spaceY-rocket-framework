@@ -1,7 +1,7 @@
 #ifndef ROCKETMODULE_H
 #define ROCKETMODULE_H
 
-#include <string.h>
+#include "param.h"
 
 /**
  * @brief
@@ -28,13 +28,13 @@ public:
      * @param _name name of module
      * @param _updateFrequency update frequency of module (set -1 to imply make module non-updating)
      */
-    RocketModule(string _name, int _updateFrequency);
+    RocketModule(char* _name, int _updateFrequency);
     /**
      * @brief Get name the RocketModule
      *
-     * @return string name of the RocketModule
+     * @return char* name of the RocketModule
      */
-    string getName();
+    char* getName();
     /**
      * @brief Get update frequency of the RocketModule
      *
@@ -51,7 +51,7 @@ public:
 protected:
     int tick;
     int updateFrequency;
-    string name;
+    char name[ROCKET_MODULE_NAME_LEN];
 
 private:
 };

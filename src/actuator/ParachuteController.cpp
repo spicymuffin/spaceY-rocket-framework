@@ -1,14 +1,6 @@
-#include <iostream>
-#include <string>
-#include <vector>
+#include "actuator/ParachuteController.h"
 
-#include "IMU.h"
-
-#include "ParachuteController.h"
-
-using namespace std;
-
-ParachuteController::ParachuteController(string _name,
+ParachuteController::ParachuteController(char* _name,
                                          int _updateFrequency,
                                          IMU *_parachuteIMU)
     : RocketModule(_name, _updateFrequency)

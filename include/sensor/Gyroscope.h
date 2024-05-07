@@ -1,16 +1,10 @@
 #ifndef GYROSCOPE_H
 #define GYROSCOPE_H
 
-#include <iostream>
-#include <string>
-#include <vector>
-
 #include "base_class/RocketModule.h"
 #include "base_class/Sensor.h"
 #include "actuator/TextDataSaver.h"
 #include "system/Clock.h"
-
-using namespace std;
 
 class Gyroscope : public RocketModule, public Sensor
 {
@@ -34,7 +28,7 @@ public:
      * @param _textDataSaver Gyroscope's data storer (pointer to a TextDataSaver)
      * @param _clock pointer to a Clock object to get timestamps for datapacks
      */
-    Gyroscope(string _name, int _updateFrequency, TextDataSaver *_textDataSaver, Clock *_clock);
+    Gyroscope(char* _name, int _updateFrequency, TextDataSaver *_textDataSaver, Clock *_clock);
 
     /**
      * @brief

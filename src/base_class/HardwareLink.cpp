@@ -1,8 +1,6 @@
-#include "HardwareLink.h"
+#include "base_class/HardwareLink.h"
 
-using namespace std;
-
-HardwareLink::HardwareLink(string _hardwareName)
+HardwareLink::HardwareLink(char* _hardwareName)
 {
     hardwareName = _hardwareName;
 }

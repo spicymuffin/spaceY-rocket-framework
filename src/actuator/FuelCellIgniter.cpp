@@ -1,12 +1,6 @@
-#include <iostream>
-#include <string>
-#include <vector>
+#include "actuator/FuelCellIgniter.h"
 
-#include "FuelCellIgniter.h"
-
-using namespace std;
-
-FuelCellIgniter::FuelCellIgniter(string _name, int _updateFrequency)
+FuelCellIgniter::FuelCellIgniter(char* _name, int _updateFrequency)
     : RocketModule(_name, _updateFrequency)
 {
     // init igniter

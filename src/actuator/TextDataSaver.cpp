@@ -1,20 +1,14 @@
-#include <iostream>
-#include <string>
-#include <vector>
-
-using namespace std;
-
 #include "actuator/TextDataSaver.h"
 
 // https://stackoverflow.com/questions/19132894/writing-to-file-line-by-line-vs-writing-whole-text-at-once
 // apparently making a write buffer is useless so we're not going
 // to do that.
-void TextDataSaver::dumpLine(string _line)
+void TextDataSaver::dumpLine(char* _line)
 {
     dumpFile << _line + '\n';
 }
 
-TextDataSaver::TextDataSaver(string _name, int _updateFrequency, string _directoryPath, string _fileNamePostfix) : RocketModule(_name, _updateFrequency)
+TextDataSaver::TextDataSaver(char* _name, int _updateFrequency, char* _directoryPath, char* _fileNamePostfix) : RocketModule(_name, _updateFrequency)
 {
     directoryPath = _directoryPath;
 

@@ -11,6 +11,8 @@
  * use cmake to build this crap
  */
 
+// param
+#include "param.h"
 
 // base classes
 #include "base_class/RocketModule.h"
@@ -27,15 +29,18 @@
 #include "hardware_link/HardwareLink_servo_x.h"
 #include "hardware_link/HardwareLink_usb.h"
 
+// pico sdk
 #include <string.h>
+#include <stdio.h>
+#include "pico/stdlib.h"
 
-using namespace std;
 
 // constants
-const string FLIGHT_LOGS_DIRECTORY = "/data/flight logs";
-const string IMU_LOGS_DIRECTORY = "/data/IMU logs";
+// this is all unusuble unless someone makes the USB thing work ;-;
+// const string FLIGHT_LOGS_DIRECTORY = "/data/flight logs";
+// const string IMU_LOGS_DIRECTORY = "/data/IMU logs";
 
-const string COMMUNICATION_PROTOCOL_PATH = "/communication_protocols/mainprotocol.json";
+// const string COMMUNICATION_PROTOCOL_PATH = "/communication_protocols/mainprotocol.json";
 
 const int REFRESH_RATE = 1024; // in Hz
 const int MICROSECONDS_PER_SECOND = 1000000;
@@ -58,33 +63,34 @@ bool ENDLESS = false;
 // if [ENDLESS] is set to false main loop will run for [TEST_DURATION] seconds
 unsigned int TEST_DURATION = 10;
 
-vector<RocketModule *> modules;
+RocketModule **modules[ROCKET_MODULE_TABLE_LEN];
 
 int main(int argc, char *argv[])
 {
     // debug msgs
-    cout << "initializing rocket.." << endl;
+    printf("intitializing...\n");
 
-    cout << "doing pre calculations..." << endl;
+    printf("doing pre calculations...\n");
 
+    /// TODO: move to macros?
     // calculate lengths
     TICK_LENGTH_MICROSECONDS = MICROSECONDS_PER_SECOND / REFRESH_RATE;
     TICK_REMINDER_MICROSECONDS = MICROSECONDS_PER_SECOND % REFRESH_RATE;
 
 #pragma region figure out current directory
 
-    // figure out working directory (linux)
-    std::string cur_dir(argv[0]);
+    // // figure out working directory (linux)
+    // std::string cur_dir(argv[0]);
 
-    // int pos = cur_dir.find_last_of("/\\");
-    int i = cur_dir.length() - 1;
-    while (cur_dir[i] != '/')
-    {
-        cur_dir.pop_back();
-        --i;
-    }
-    cur_dir.pop_back();
-    cout << "working directory: " << cur_dir << endl;
+    // // int pos = cur_dir.find_last_of("/\\");
+    // int i = cur_dir.length() - 1;
+    // while (cur_dir[i] != '/')
+    // {
+    //     cur_dir.pop_back();
+    //     --i;
+    // }
+    // cur_dir.pop_back();
+    // printf("working directory: " << cur_dir);
 
 #pragma endregion
 
@@ -92,11 +98,11 @@ int main(int argc, char *argv[])
 
     // init clock
     Clock mainClock(&currentTickTimestamp);
-    cout << "system clock initialized." << endl;
+    printf("system clock initialized.\n");
 
     // initialize flight log
     FlightLogger flightLog = FlightLogger("main flight log", cur_dir + FLIGHT_LOGS_DIRECTORY, "flight_log");
-    cout << flightLog.getName() << " initialized." << endl;
+    printf("%s initialized.\n", flightLog.getName());
 
 #pragma endregion
 
@@ -132,7 +138,7 @@ int main(int argc, char *argv[])
         }
 
         // debug stuff
-        cout << "tick no. " << tick << endl;
+        printf("tick no. " << tick);
 
         long long tickStartTimestamp;
         long long tickEndTimestamp;
@@ -156,8 +162,8 @@ int main(int argc, char *argv[])
         // profiling stuff
         tickEndTimestamp = mainClock.getNewTimestamp();
 
-        cout << "execution completed in " << tickEndTimestamp - tickStartTimestamp << " microseconds (" << (float)(tickEndTimestamp - tickStartTimestamp) / (float)TICK_LENGTH_MICROSECONDS * 100 << "% of time used)" << endl;
-        cout << "waiting " << nextTickTimestamp - tickEndTimestamp << " microseconds to end of tick..." << endl;
+        printf("execution completed in " << tickEndTimestamp - tickStartTimestamp << " microseconds (" << (float)(tickEndTimestamp - tickStartTimestamp) / (float)TICK_LENGTH_MICROSECONDS * 100 << "% of time used)");
+        printf("waiting " << nextTickTimestamp - tickEndTimestamp << " microseconds to end of tick...");
 
         // exec completed, we need to wait
         while (currentTickTimestamp < nextTickTimestamp)

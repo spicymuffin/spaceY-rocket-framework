@@ -1,16 +1,10 @@
 #ifndef IMU_H
 #define IMU_H
 
-#include <iostream>
-#include <string>
-#include <vector>
-
 #include "base_class/RocketModule.h"
 #include "base_class/Sensor.h"
 #include "actuator/TextDataSaver.h"
 #include "system/Clock.h"
-
-using namespace std;
 
 // TODO: these classes shouldn't cout anyting!
 

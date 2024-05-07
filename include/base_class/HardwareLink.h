@@ -1,18 +1,14 @@
 #ifndef HARDWARELINK_H
 #define HARDWARELINK_H
 
-using namespace std;
-
-#include <string>
-
 class HardwareLink
 {
 public:
-    HardwareLink(string _hardwareName);
+    HardwareLink(char* _hardwareName);
 
 private:
 protected:
-    string hardwareName;
+    char* hardwareName;
 };
 
 #endif

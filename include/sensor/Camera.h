@@ -1,16 +1,9 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <fstream>
-#include <ctime>
-
 #include "base_class/RocketModule.h"
 #include "base_class/Sensor.h"
 
-using namespace std;
 
 /**
  * @brief
@@ -19,7 +12,7 @@ using namespace std;
 class Camera : public RocketModule, public Sensor
 {
 public:
-    Camera(string _name, int _updateFrequency, string _directoryPath, string _fileNamePostfix);
+    Camera(char* _name, int _updateFrequency, char* _directoryPath, char* _fileNamePostfix);
 
     int update() { return 0; };
 

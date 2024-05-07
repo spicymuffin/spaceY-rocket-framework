@@ -1,16 +1,10 @@
-#include <iostream>
-#include <string>
-#include <vector>
-
-#include "system/base_class/RocketModule.h"
+#include "base_class/RocketModule.h"
 #include "system/CommunicationSystem.h"
 
-using namespace std;
-
-CommunicationSystem::CommunicationSystem(string _name,
+CommunicationSystem::CommunicationSystem(char* _name,
                                          int _updateFrequency,
                                          vector<RocketModule *> _accessible,
-                                         string _communicationProtocolPath)
+                                         char* _communicationProtocolPath)
 {
     name = _name;
     updateFrequency = _updateFrequency;
@@ -27,4 +21,4 @@ int CommunicationSystem::sendBytes(byte *a)
 {
 }
 
-int interpret(string a);
+int interpret(char* a);
