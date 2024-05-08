@@ -52,9 +52,10 @@ int TICK_REMINDER_MICROSECONDS = -1;
 unsigned int tick = 0;
 
 // current tick's start's timestamp
-long long currentTickTimestamp = 0; // TODO: change to longs
+
+uint32_t currentTickTimestamp = 0; // TODO: change to longs
 // next tick's start's timestamp
-long long nextTickTimestamp = 0;
+uint32_t nextTickTimestamp = 0;
 
 // if set to true the main loop will run endlessly
 bool ENDLESS = false;
@@ -69,7 +70,10 @@ int main(int argc, char *argv[])
     // debug msgs
     printf("intitializing...\n");
 
-    printf("doing pre calculations...\n");
+    for (int i = 0; i < RM_TABLE_LEN; i++)
+    {
+        modules[i] = nullptr;
+    }
 
     /// TODO: move to macros?
     // calculate lengths
@@ -79,7 +83,7 @@ int main(int argc, char *argv[])
 #pragma region initialize rocket systems
 
     // init clock
-    Clock mainClock(&currentTickTimestamp);
+    Clock mainClock = Clock();
     printf("system clock initialized.\n");
 
     // initialize flight log
@@ -109,22 +113,26 @@ int main(int argc, char *argv[])
 
     while (ENDLESS ? true : tick <= REFRESH_RATE * TEST_DURATION - 1)
     {
-        // record this tick's start's timestamp
+        // update clock
         mainClock.update();
+        // record this tick's start's timestamp
+        currentTickTimestamp = mainClock.getTimestamp();
 
         // calculate when next tick should start
         nextTickTimestamp += TICK_LENGTH_MICROSECONDS;
 
+        // sometimes TICK_LENGTH_MICROSECONDS isnt a natural number
+        // so we have to account for that
         if (tick % REFRESH_RATE == 0)
         {
             nextTickTimestamp += TICK_REMINDER_MICROSECONDS;
         }
 
         // debug stuff
-        printf("tick no. %d", tick);
+        printf("tick no. %x", tick);
 
-        long long tickStartTimestamp;
-        long long tickEndTimestamp;
+        uint32_t tickStartTimestamp;
+        uint32_t tickEndTimestamp;
 
         // profiling stuff
         tickStartTimestamp = mainClock.getNewTimestamp();
@@ -136,7 +144,7 @@ int main(int argc, char *argv[])
         // update all rocket modules if they need to be updated
         for (int i = 0; i < RM_TABLE_LEN; ++i)
         {
-            if (tick % (modules[i])->getUpdateFrequency() == 0)
+            if (modules[i] != nullptr && tick % (modules[i])->getUpdateFrequency() == 0)
             {
                 (modules[i])->update();
             }
@@ -151,7 +159,7 @@ int main(int argc, char *argv[])
         // exec completed, we need to wait
         while (currentTickTimestamp < nextTickTimestamp)
         {
-            mainClock.update();
+            mainClock.getNewTimestamp();
         }
         ++tick;
     }

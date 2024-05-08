@@ -1,17 +1,26 @@
 #include "system/Clock.h"
 
-Clock::Clock(long long *_updateTimestampTarget){};
+#include "param.h"
 
-long long Clock::getNewTimestamp() {
-    /// TODO: implement
+// pico sdk
+#include <string.h>
+#include <stdio.h>
+#include "pico/stdlib.h"
+
+Clock::Clock(){};
+
+const uint32_t Clock::getNewTimestamp()
+{
+    this->update();
+    return currentTimestamp;
 };
 
-long long Clock::getTimestamp()
+const uint32_t Clock::getTimestamp() const
 {
-    return currentTimestampInt;
+    return currentTimestamp;
 }
 
 void Clock::update()
 {
-    /// TODO: implement update
+    currentTimestamp = time_us_32();
 }

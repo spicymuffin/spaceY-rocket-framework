@@ -3,9 +3,14 @@
 
 #include "param.h"
 
+// pico sdk
+#include <string.h>
+#include <stdio.h>
+#include "pico/stdlib.h"
+
 // DEPRECATED BC OF CHANGE TO MICROCONTROLLER (next 2 lines)
 // typeid map https://codeforces.com/blog/entry/16101
-// ex): typeid(currentTimestampInt).name()
+// ex): typeid(currentTimestamp).name()
 
 /**
  * @brief
@@ -18,23 +23,22 @@ public:
     /**
      * @brief Construct a new Clock object
      *
-     * @param _updateTimestampTarget
      */
-    Clock(long long *_updateTimestampTarget);
+    Clock();
     /**
      * @brief update and return current timestamp
      *
-     * @return long long current timestamp
+     * @return uint32_t current timestamp
      */
-    long long getNewTimestamp();
+    const uint32_t getNewTimestamp();
     /**
-     * @brief get the most recent timestamp
+     * @brief get the most recent cached timestamp
      *
-     * @return long long most recent timestamp
+     * @return uint32_t most recent timestamp
      */
-    long long getTimestamp();
+    const uint32_t getTimestamp() const;
     /**
-     * @brief updates *updateTimestampTarget to current timestamp
+     * @brief updates currentTimestamp
      *
      */
     void update();
@@ -42,7 +46,7 @@ public:
 protected:
 private:
     // chrono::high_resolution_clock::time_point currentTimestamp;
-    long long currentTimestampInt;
+    uint32_t currentTimestamp = 0;
 };
 
 #endif
