@@ -5,7 +5,9 @@
 
 #include "base_class/RocketModule.h"
 #include "base_class/Sensor.h"
+
 #include "actuator/TextDataSaver.h"
+
 #include "system/Clock.h"
 
 struct AccelerometerDataPack
@@ -18,7 +20,7 @@ struct AccelerometerDataPack
 class Accelerometer : public RocketModule, public Sensor
 {
 public:
-    Accelerometer(char *_name,
+    Accelerometer(const char *_name,
                   int _updateFrequency,
                   TextDataSaver *_textDataSaver,
                   Clock *_clock);

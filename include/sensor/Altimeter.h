@@ -20,7 +20,7 @@ struct AltimeterDataPack
 class Altimeter : public RocketModule, public Sensor
 {
 public:
-    Altimeter(char *_name,
+    Altimeter(const char *_name,
               int _updateFrequency,
               TextDataSaver *_textDataSaver,
               Clock *_clock);

@@ -18,7 +18,7 @@ struct AngularAccelerometerDataPack
 class AngularAccelerometer : public RocketModule, public Sensor
 {
 public:
-    AngularAccelerometer(char *_name,
+    AngularAccelerometer(const char *_name,
                          int _updateFrequency,
                          TextDataSaver *_textDataSaver,
                          Clock *_clock,
@@ -31,8 +31,8 @@ public:
 private:
     TextDataSaver *textDataSaver;
     Clock *clock;
-    float (*getNewReadingHL)();
-    float latestValue;
+    AngularAccelerometerDataPack (*getNewReadingHL)();
+    AngularAccelerometerDataPack latestValue;
 };
 
 #endif

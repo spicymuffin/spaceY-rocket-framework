@@ -1,6 +1,6 @@
-#include "param.h"
-
 #include "actuator/FuelCellIgniter.h"
+
+#include "param.h"
 
 FuelCellIgniter::FuelCellIgniter(char *_name, int _updateFrequency)
     : RocketModule(_name, _updateFrequency)

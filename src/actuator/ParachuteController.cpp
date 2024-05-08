@@ -1,6 +1,6 @@
-#include "param.h"
-
 #include "actuator/ParachuteController.h"
+
+#include "param.h"
 
 #include "sensor/Accelerometer.h"
 #include "sensor/AngularAccelerometer.h"

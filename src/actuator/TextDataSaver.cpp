@@ -1,6 +1,6 @@
-#include "param.h"
-
 #include "actuator/TextDataSaver.h"
+
+#include "param.h"
 
 // https://stackoverflow.com/questions/19132894/writing-to-file-line-by-line-vs-writing-whole-text-at-once
 // apparently making a write buffer is useless so we're not going

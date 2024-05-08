@@ -1,5 +1,7 @@
 #include "base_class/RocketModule.h"
 
+#include "param.h"
+
 // pico sdk
 #include <string.h>
 #include <stdio.h>

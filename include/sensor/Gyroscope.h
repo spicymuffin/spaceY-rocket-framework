@@ -16,7 +16,7 @@ struct GyroscopeDataPack
 class Gyroscope : public RocketModule, public Sensor
 {
 public:
-    Gyroscope(char *_name,
+    Gyroscope(const char *_name,
               int _updateFrequency,
               TextDataSaver *_textDataSaver,
               Clock *_clock);
@@ -26,6 +26,8 @@ public:
 private:
     TextDataSaver *textDataSaver;
     Clock *clock;
+    GyroscopeDataPack (*getNewReadingHL)();
+    GyroscopeDataPack latestValue;
 };
 
 #endif

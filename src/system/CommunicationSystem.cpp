@@ -1,5 +1,8 @@
-#include "base_class/RocketModule.h"
 #include "system/CommunicationSystem.h"
+
+#include "base_class/RocketModule.h"
+
+#include "param.h"
 
 // pico sdk
 #include <string.h>

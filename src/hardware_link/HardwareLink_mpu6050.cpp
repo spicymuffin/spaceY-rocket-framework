@@ -1,4 +1,7 @@
 #include "base_class/HardwareLink.h"
+
+#include "param.h"
+
 #include "hardware_link/HardwareLink_mpu6050.h"
 
 #include "sensor/Accelerometer.h"
