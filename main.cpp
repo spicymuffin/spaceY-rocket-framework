@@ -41,12 +41,12 @@
 
 // const string COMMUNICATION_PROTOCOL_PATH = "/communication_protocols/mainprotocol.json";
 
-const int REFRESH_RATE = 1024; // in Hz
-const int MICROSECONDS_PER_SECOND = 1000000;
+const uint32_t REFRESH_RATE = 10; // in Hz
+const uint32_t MICROSECONDS_PER_SECOND = 1000000;
 
 // calculated at runtime
-int TICK_LENGTH_MICROSECONDS = -1;
-int TICK_REMINDER_MICROSECONDS = -1;
+uint32_t TICK_LENGTH_MICROSECONDS = -1;
+uint32_t TICK_REMINDER_MICROSECONDS = -1;
 
 // tick of rocket
 unsigned int tick = 0;
@@ -61,14 +61,15 @@ uint32_t nextTickTimestamp = 0;
 bool ENDLESS = false;
 
 // if [ENDLESS] is set to false main loop will run for [TEST_DURATION] seconds
-unsigned int TEST_DURATION = 10;
+uint32_t TEST_DURATION = 10;
 
 RocketModule *modules[RM_TABLE_LEN];
 
 int main(int argc, char *argv[])
 {
-    // debug msgs
     printf("intitializing...\n");
+
+    stdio_init_all();
 
     for (int i = 0; i < RM_TABLE_LEN; i++)
     {
@@ -85,6 +86,8 @@ int main(int argc, char *argv[])
     // init clock
     Clock mainClock = Clock();
     printf("system clock initialized.\n");
+    printf("TICK_LENGTH_MICROSECONDS: %zu\n", TICK_LENGTH_MICROSECONDS);
+    printf("TICK_REMINDER_MICROSECONDS: %zu\n", TICK_REMINDER_MICROSECONDS);
 
     // initialize flight log
     // FlightLogger flightLog = FlightLogger("main flight log", cur_dir + FLIGHT_LOGS_DIRECTORY, "flight_log");
@@ -106,17 +109,13 @@ int main(int argc, char *argv[])
 
 #pragma endregion
 
-    // updating main clock sets [currentTickTimestamp] to current timestamp.
-    // mainClock.update();
-    // init this variable
-    // nextTickTimestamp = currentTickTimestamp;
+    currentTickTimestamp = mainClock.getNewTimestamp();
+    nextTickTimestamp = currentTickTimestamp;
 
     while (ENDLESS ? true : tick <= REFRESH_RATE * TEST_DURATION - 1)
     {
-        // update clock
-        mainClock.update();
         // record this tick's start's timestamp
-        currentTickTimestamp = mainClock.getTimestamp();
+        currentTickTimestamp = mainClock.getNewTimestamp();
 
         // calculate when next tick should start
         nextTickTimestamp += TICK_LENGTH_MICROSECONDS;
@@ -129,7 +128,7 @@ int main(int argc, char *argv[])
         }
 
         // debug stuff
-        printf("tick no. %x", tick);
+        printf("tick no. %u\n", tick);
 
         uint32_t tickStartTimestamp;
         uint32_t tickEndTimestamp;
@@ -153,16 +152,17 @@ int main(int argc, char *argv[])
         // profiling stuff
         tickEndTimestamp = mainClock.getNewTimestamp();
 
-        printf("execution completed in %d microseconds (%f%% of time used)", tickEndTimestamp - tickStartTimestamp, (float)(tickEndTimestamp - tickStartTimestamp) / (float)TICK_LENGTH_MICROSECONDS * 100);
-        printf("waiting %d microseconds to end of tick...", nextTickTimestamp - tickEndTimestamp);
+        printf("execution completed in %zu microseconds (%f%% of time used)\n", tickEndTimestamp - tickStartTimestamp, ((float)(tickEndTimestamp - tickStartTimestamp) / (float)TICK_LENGTH_MICROSECONDS) * 100);
+        printf("waiting %zu microseconds to end of tick...\n", nextTickTimestamp - tickEndTimestamp);
 
         // exec completed, we need to wait
         while (currentTickTimestamp < nextTickTimestamp)
         {
-            mainClock.getNewTimestamp();
+            currentTickTimestamp = mainClock.getNewTimestamp();
         }
         ++tick;
     }
 
+    printf("execution complete...\n");
     return 0;
 }

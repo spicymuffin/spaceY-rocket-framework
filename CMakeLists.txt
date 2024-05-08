@@ -56,6 +56,6 @@ target_link_libraries(${EXECUTABLE_NAME} pico_stdlib hardware_gpio ${LIB_NAME})
 target_link_libraries(${LIB_NAME} pico_stdlib hardware_gpio)
 
 pico_enable_stdio_usb(${EXECUTABLE_NAME} 1)
-pico_enable_stdio_uart(${EXECUTABLE_NAME} 1)
+pico_enable_stdio_uart(${EXECUTABLE_NAME} 0)
 
 pico_add_extra_outputs(${EXECUTABLE_NAME})
