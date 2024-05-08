@@ -22,7 +22,7 @@ public:
                          int _updateFrequency,
                          TextDataSaver *_textDataSaver,
                          Clock *_clock,
-                         float (*_getNewReading)());
+                         AngularAccelerometerDataPack (*_getNewReading)());
 
     int update();
 

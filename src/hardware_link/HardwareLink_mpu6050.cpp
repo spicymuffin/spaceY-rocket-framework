@@ -1,20 +1,28 @@
-#include "base_class/HardwareLink.h"
+// implementing
+#include "hardware_link/HardwareLink_mpu6050.h"
 
 #include "param.h"
 
-#include "hardware_link/HardwareLink_mpu6050.h"
+// base_class
+#include "base_class/HardwareLink.h"
 
+// pico sdk
+#include <string.h>
+#include <stdio.h>
+#include "pico/stdlib.h"
+
+// depends on
 #include "sensor/Accelerometer.h"
 #include "sensor/Gyroscope.h"
 #include "sensor/AngularAccelerometer.h"
 
-HardwareLink_mpu6050::HardwareLink_mpu6050(char *_hardwareName)
+HardwareLink_mpu6050::HardwareLink_mpu6050(const char *_hardwareName)
     : HardwareLink(_hardwareName)
 {
-    /// TODO: initialize mpu6050
+    strcpy(hardwareName, _hardwareName);
 }
 
-AccelerometerDataPack HardwareLink_mpu6050::getAccelerometerReading()
+const AccelerometerDataPack HardwareLink_mpu6050::getAccelerometerReading()
 {
     AccelerometerDataPack test;
     test.acc_x = 0;

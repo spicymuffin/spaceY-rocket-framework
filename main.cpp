@@ -25,9 +25,12 @@
 // HardwareLinks
 #include "hardware_link/HardwareLink_mpu6050.h"
 #include "hardware_link/HardwareLink_fuelcelligniter.h"
-#include "hardware_link/HardwareLink_onboardled.h"
+#include "hardware_link/HardwareLink_picoonboardled.h"
 #include "hardware_link/HardwareLink_servotype0.h"
 #include "hardware_link/HardwareLink_usb.h"
+
+// Actuators
+#include "actuator/OnboardLed.h"
 
 // pico sdk
 #include <string.h>
@@ -41,7 +44,7 @@
 
 // const string COMMUNICATION_PROTOCOL_PATH = "/communication_protocols/mainprotocol.json";
 
-const uint32_t REFRESH_RATE = 10; // in Hz
+const uint32_t REFRESH_RATE = 64; // in Hz
 const uint32_t MICROSECONDS_PER_SECOND = 1000000;
 
 // calculated at runtime
@@ -98,6 +101,15 @@ int main(int argc, char *argv[])
 #pragma region initialize hardware
 
     /// TODO: initialize hardware
+    HardwareLink_picoonboardled HL_picoonboardled = HardwareLink_picoonboardled("picoonboardled");
+
+#pragma endregion
+
+#pragma region initialize modules
+
+    OnboardLed led = OnboardLed("onboard_led",
+                                16,
+                                &HL_picoonboardled.picoonboardled_setState)
 
 #pragma endregion
 
@@ -109,7 +121,7 @@ int main(int argc, char *argv[])
 
 #pragma endregion
 
-    currentTickTimestamp = mainClock.getNewTimestamp();
+        currentTickTimestamp = mainClock.getNewTimestamp();
     nextTickTimestamp = currentTickTimestamp;
 
     while (ENDLESS ? true : tick <= REFRESH_RATE * TEST_DURATION - 1)
