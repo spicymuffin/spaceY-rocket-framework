@@ -1,13 +1,16 @@
 #include "base_class/RocketModule.h"
 
-#include "string.h"
+// pico sdk
+#include <string.h>
+#include <stdio.h>
+#include "pico/stdlib.h"
 
-char* RocketModule::getName() { return name; };
+char *RocketModule::getName() { return name; };
 int RocketModule::getUpdateFrequency() const { return updateFrequency; };
 
-RocketModule::RocketModule(char* _name, int _updateFrequency)
+RocketModule::RocketModule(const char *_name, int _updateFrequency)
 {
-    name = _name;
+    strcpy(name, _name);
     updateFrequency = _updateFrequency;
 };
 

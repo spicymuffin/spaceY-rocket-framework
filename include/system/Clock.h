@@ -1,7 +1,9 @@
 #ifndef CLOCK_H
 #define CLOCK_H
 
-// DEPRECATED BC OF CHANGE TO MICROCONTROLLER (next 4 lines)
+#include "param.h"
+
+// DEPRECATED BC OF CHANGE TO MICROCONTROLLER (next 2 lines)
 // typeid map https://codeforces.com/blog/entry/16101
 // ex): typeid(currentTimestampInt).name()
 
@@ -39,9 +41,8 @@ public:
 
 protected:
 private:
-    chrono::high_resolution_clock::time_point currentTimestamp;
+    // chrono::high_resolution_clock::time_point currentTimestamp;
     long long currentTimestampInt;
-    long long *updateTimestampTarget;
 };
 
 #endif

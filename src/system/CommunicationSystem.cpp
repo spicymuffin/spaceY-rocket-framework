@@ -1,15 +1,20 @@
 #include "base_class/RocketModule.h"
 #include "system/CommunicationSystem.h"
 
-CommunicationSystem::CommunicationSystem(char* _name,
+// pico sdk
+#include <string.h>
+#include <stdio.h>
+#include "pico/stdlib.h"
+
+CommunicationSystem::CommunicationSystem(const char *_name,
                                          int _updateFrequency,
-                                         vector<RocketModule *> _accessible,
-                                         char* _communicationProtocolPath)
+                                         RocketModule *_accessible,
+                                         const char *_communicationProtocolPath)
 {
-    name = _name;
+    strcpy(name, _name);
     updateFrequency = _updateFrequency;
     accessible = _accessible;
-    communicationProtocolPath = _communicationProtocolPath;
+    strcpy(communicationProtocolPath, _communicationProtocolPath);
 }
 
 void CommunicationSystem::update()
@@ -17,8 +22,10 @@ void CommunicationSystem::update()
     /// TODO: communicate with physical thing and read.
 }
 
-int CommunicationSystem::sendBytes(byte *a)
+int CommunicationSystem::sendBytes(char *a, int len)
 {
 }
 
-int interpret(char* a);
+int interpret(char *a)
+{
+}

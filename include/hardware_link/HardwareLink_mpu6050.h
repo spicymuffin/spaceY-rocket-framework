@@ -10,10 +10,10 @@
 class HardwareLink_mpu6050 : public HardwareLink
 {
 public:
-    HardwareLink_mpu6050(char* _hardwareName);
-    float getThermometerReading();
-    float getAltimeterReading();
+    HardwareLink_mpu6050(char *_hardwaremodelName);
     AccelerometerDataPack getAccelerometerReading();
+    AngularAccelerometerDataPack getAngularAccelerometerReading();
+    GyroscopeDataPack getGyroscopeReading();
 
 private:
 protected:

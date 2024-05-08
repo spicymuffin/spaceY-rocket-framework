@@ -1,14 +1,16 @@
 #ifndef HARDWARELINK_H
 #define HARDWARELINK_H
 
+#include "param.h"
+
 class HardwareLink
 {
 public:
-    HardwareLink(char* _hardwareName);
+    HardwareLink(const char *_hardwareName);
 
 private:
 protected:
-    char* hardwareName;
+    char hardwareName[HARDWARE_MAX_NAME_LEN] = "";
 };
 
 #endif

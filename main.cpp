@@ -5,7 +5,7 @@
  * @version 1.1
  * @date 2023-11-20
  *
- * @copyright lol
+ * @copyright lol somepne should pay me for this
  *
  *
  * use cmake to build this crap
@@ -25,15 +25,14 @@
 // HardwareLinks
 #include "hardware_link/HardwareLink_mpu6050.h"
 #include "hardware_link/HardwareLink_fuelcelligniter.h"
-#include "hardware_link/HardwareLink_onboard_led.h"
-#include "hardware_link/HardwareLink_servo_x.h"
+#include "hardware_link/HardwareLink_onboardled.h"
+#include "hardware_link/HardwareLink_servotype0.h"
 #include "hardware_link/HardwareLink_usb.h"
 
 // pico sdk
 #include <string.h>
 #include <stdio.h>
 #include "pico/stdlib.h"
-
 
 // constants
 // this is all unusuble unless someone makes the USB thing work ;-;
@@ -63,7 +62,7 @@ bool ENDLESS = false;
 // if [ENDLESS] is set to false main loop will run for [TEST_DURATION] seconds
 unsigned int TEST_DURATION = 10;
 
-RocketModule **modules[ROCKET_MODULE_TABLE_LEN];
+RocketModule *modules[RM_TABLE_LEN];
 
 int main(int argc, char *argv[])
 {
@@ -77,23 +76,6 @@ int main(int argc, char *argv[])
     TICK_LENGTH_MICROSECONDS = MICROSECONDS_PER_SECOND / REFRESH_RATE;
     TICK_REMINDER_MICROSECONDS = MICROSECONDS_PER_SECOND % REFRESH_RATE;
 
-#pragma region figure out current directory
-
-    // // figure out working directory (linux)
-    // std::string cur_dir(argv[0]);
-
-    // // int pos = cur_dir.find_last_of("/\\");
-    // int i = cur_dir.length() - 1;
-    // while (cur_dir[i] != '/')
-    // {
-    //     cur_dir.pop_back();
-    //     --i;
-    // }
-    // cur_dir.pop_back();
-    // printf("working directory: " << cur_dir);
-
-#pragma endregion
-
 #pragma region initialize rocket systems
 
     // init clock
@@ -101,8 +83,8 @@ int main(int argc, char *argv[])
     printf("system clock initialized.\n");
 
     // initialize flight log
-    FlightLogger flightLog = FlightLogger("main flight log", cur_dir + FLIGHT_LOGS_DIRECTORY, "flight_log");
-    printf("%s initialized.\n", flightLog.getName());
+    // FlightLogger flightLog = FlightLogger("main flight log", cur_dir + FLIGHT_LOGS_DIRECTORY, "flight_log");
+    // printf("%s initialized.\n", flightLog.getName());
 
 #pragma endregion
 
@@ -114,21 +96,22 @@ int main(int argc, char *argv[])
 
 #pragma region intialize communication systems
 
-    vector<RocketModule *> mainCommuniationSystem_Modules = {};
-    // init main Communication System
-    CommunicationSystem mainCommunicationSystem = CommunicationSystem("main communication system", 10, mainCommuniationSystem_Modules, cur_dir + COMMUNICATION_PROTOCOL_PATH);
+    // vector<RocketModule *> mainCommuniationSystem_Modules = {};
+    //  init main Communication System
+    // CommunicationSystem mainCommunicationSystem = CommunicationSystem("main communication system", 10, mainCommuniationSystem_Modules, cur_dir + COMMUNICATION_PROTOCOL_PATH);
 
 #pragma endregion
 
     // updating main clock sets [currentTickTimestamp] to current timestamp.
-    mainClock.update();
+    // mainClock.update();
     // init this variable
-    nextTickTimestamp = currentTickTimestamp;
+    // nextTickTimestamp = currentTickTimestamp;
 
     while (ENDLESS ? true : tick <= REFRESH_RATE * TEST_DURATION - 1)
     {
         // record this tick's start's timestamp
         mainClock.update();
+
         // calculate when next tick should start
         nextTickTimestamp += TICK_LENGTH_MICROSECONDS;
 
@@ -138,7 +121,7 @@ int main(int argc, char *argv[])
         }
 
         // debug stuff
-        printf("tick no. " << tick);
+        printf("tick no. %d", tick);
 
         long long tickStartTimestamp;
         long long tickEndTimestamp;
@@ -148,22 +131,22 @@ int main(int argc, char *argv[])
 
         /// TODO: update CommunicationSystem
 
-        mainCommunicationSystem.update();
+        // mainCommunicationSystem.update();
 
         // update all rocket modules if they need to be updated
-        for (int i = 0; i < static_cast<int>(modules.size()); ++i)
+        for (int i = 0; i < RM_TABLE_LEN; ++i)
         {
-            if (tick % modules[i]->getUpdateFrequency() == 0)
+            if (tick % (modules[i])->getUpdateFrequency() == 0)
             {
-                modules[i]->update();
+                (modules[i])->update();
             }
         }
 
         // profiling stuff
         tickEndTimestamp = mainClock.getNewTimestamp();
 
-        printf("execution completed in " << tickEndTimestamp - tickStartTimestamp << " microseconds (" << (float)(tickEndTimestamp - tickStartTimestamp) / (float)TICK_LENGTH_MICROSECONDS * 100 << "% of time used)");
-        printf("waiting " << nextTickTimestamp - tickEndTimestamp << " microseconds to end of tick...");
+        printf("execution completed in %d microseconds (%f%% of time used)", tickEndTimestamp - tickStartTimestamp, (float)(tickEndTimestamp - tickStartTimestamp) / (float)TICK_LENGTH_MICROSECONDS * 100);
+        printf("waiting %d microseconds to end of tick...", nextTickTimestamp - tickEndTimestamp);
 
         // exec completed, we need to wait
         while (currentTickTimestamp < nextTickTimestamp)

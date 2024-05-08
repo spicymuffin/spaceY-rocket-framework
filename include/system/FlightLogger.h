@@ -1,6 +1,8 @@
 #ifndef FLIGHTLOGGER_H
 #define FLIGHTLOGGER_H
 
+#include "param.h"
+
 /**
  * @brief
  * flightlogger. creates logs, that contain data abt the rocket's state changes and
@@ -17,8 +19,8 @@ public:
      */
     struct actionEntry
     {
-        int timestamp;
-        char* content;
+        long long timestamp;
+        char content[ACTION_ENTRY_MAX_LEN];
     };
 
     /**
@@ -29,8 +31,8 @@ public:
     struct moduleTickLog
     {
         int tickNumber;
-        char* moduleName;
-        vector<actionEntry> buffer;
+        char *moduleName;
+        actionEntry buffer[MAX_ACTION_ENTRIES_PER_TICK];
     };
 
     /**
@@ -40,14 +42,16 @@ public:
      * @param _directoryPath path to flight logs directory
      * @param _fileNamePostfix filename postfix
      */
-    FlightLogger(char* _name, char* _directoryPath, char* _fileNamePostfix);
+    FlightLogger(char *_name,
+                 char *_directoryPath,
+                 char *_fileNamePostfix);
 
     /**
      * @brief Get the name of the flight logger object
      *
      * @return char* the name of the flight logger object
      */
-    char* getName();
+    char *getName();
 
     /**
      * @brief dumps buffer contents generated during this tick to a file
@@ -63,12 +67,14 @@ public:
     void appendToTickBuffer(moduleTickLog _moduleTickLog);
 
 private:
-    ofstream dumpFile;
-    char* dumpFilePath;
-    char* directoryPath;
+    /// TODO: fix filesystem
+    // ofstream dumpFile;
+    char *dumpFilePath;
+    char *directoryPath;
 
-    vector<moduleTickLog> tickBuffer;
-    char* name;
+    /// TODO: dump to file asap
+    moduleTickLog tickBuffer[32];
+    char *name;
 };
 
 #endif
