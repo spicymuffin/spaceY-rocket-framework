@@ -6,7 +6,7 @@
 class IAccelerometerControl
 {
 public:
-    const AccelerometerDataPack getAccelerometerReading() { return {}; }
+    const virtual AccelerometerDataPack getAccelerometerReading() { return {}; }
     virtual ~IAccelerometerControl() {}
 };
 

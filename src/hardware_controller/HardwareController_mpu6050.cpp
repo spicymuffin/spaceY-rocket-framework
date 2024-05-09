@@ -14,19 +14,20 @@
 // dependcies
 #include "sensor/Accelerometer.h"
 #include "sensor/Gyroscope.h"
-#include "sensor/AngularAccelerometer.h"
 
 HardwareController_mpu6050::HardwareController_mpu6050(const char *_hardwareName)
     : HardwareController(_hardwareName)
 {
-    strcpy(hardwareName, _hardwareName);
 }
 
 const AccelerometerDataPack HardwareController_mpu6050::getAccelerometerReading()
 {
-    AccelerometerDataPack test;
-    test.x = 0;
-    test.y = 0;
-    test.z = 0;
-    return test;
+    printf("-----------------> accelerometer reading\n");
+    return {};
+}
+
+const GyroscopeDataPack HardwareController_mpu6050::getGyroscopeReading()
+{
+    printf("-----------------> gyroscope reading\n");
+    return {};
 }

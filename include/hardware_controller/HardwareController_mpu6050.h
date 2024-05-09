@@ -8,7 +8,6 @@
 
 // implements
 #include "control_interface/IAccelerometerControl.h"
-#include "control_interface/IAngularAccelerometerControl.h"
 #include "control_interface/IGyroscopeControl.h"
 
 // pico sdk
@@ -19,18 +18,15 @@
 // dependencies
 #include "sensor/Accelerometer.h"
 #include "sensor/Gyroscope.h"
-#include "sensor/AngularAccelerometer.h"
 
 class HardwareController_mpu6050 : public HardwareController,
                                    public IAccelerometerControl,
-                                   public IAngularAccelerometerControl,
                                    public IGyroscopeControl
 {
 public:
     HardwareController_mpu6050(const char *_hardwareName);
-    const AccelerometerDataPack getAccelerometerReading();
-    const AngularAccelerometerDataPack getAngularAccelerometerReading();
-    const GyroscopeDataPack getGyroscopeReading();
+    const AccelerometerDataPack getAccelerometerReading() override;
+    const GyroscopeDataPack getGyroscopeReading() override;
 
 private:
 protected:

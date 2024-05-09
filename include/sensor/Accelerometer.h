@@ -35,9 +35,14 @@ public:
         IAccelerometerControl_ref = _IAccelerometerController;
     }
 
+    const AccelerometerDataPack getReading()
+    {
+        return IAccelerometerControl_ref->getAccelerometerReading();
+    }
+
     int update()
     {
-        return 0;
+        return -1;
     }
 
 private:

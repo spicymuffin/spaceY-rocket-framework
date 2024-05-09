@@ -1,19 +1,25 @@
 #ifndef HARDWARECONTROLLER_SERVOTYPE0_H
 #define HARDWARECONTROLLER_SERVOTYPE0_H
 
+#include "param.h"
+
+// base_class
 #include "base_class/HardwareController.h"
 
-#include "sensor/Accelerometer.h"
-#include "sensor/Gyroscope.h"
-#include "sensor/AngularAccelerometer.h"
+// implements
+#include "control_interface/IServoControl.h"
 
-class HardwareController_servotype0 : public HardwareController
+// pico sdk
+#include <string.h>
+#include <stdio.h>
+#include "pico/stdlib.h"
+
+class HardwareController_servotype0 : public HardwareController,
+                                      public IServoControl
 {
 public:
-    HardwareController_servotype0(char* _hardwaremodelName);
-    float getThermometerReading();
-    float getAltimeterReading();
-    AccelerometerDataPack getAccelerometerReading();
+    HardwareController_servotype0(char *_hardwaremodelName);
+    void setAngle(int _angle) override;
 
 private:
 protected:

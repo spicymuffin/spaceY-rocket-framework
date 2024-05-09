@@ -6,7 +6,7 @@
 class IGyroscopeControl
 {
 public:
-    const GyroscopeDataPack getGyroscopeReading() { return {}; }
+    const virtual GyroscopeDataPack getGyroscopeReading() { return {}; }
     virtual ~IGyroscopeControl() {}
 };
 

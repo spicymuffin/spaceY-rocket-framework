@@ -53,8 +53,8 @@ target_include_directories(${EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR
 target_include_directories(${LIB_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(${LIB_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-target_link_libraries(${EXECUTABLE_NAME} pico_stdlib hardware_gpio ${LIB_NAME})
-target_link_libraries(${LIB_NAME} pico_stdlib hardware_gpio)
+target_link_libraries(${EXECUTABLE_NAME} pico_stdlib hardware_gpio hardware_i2c ${LIB_NAME})
+target_link_libraries(${LIB_NAME} pico_stdlib hardware_gpio hardware_i2c)
 
 pico_enable_stdio_usb(${EXECUTABLE_NAME} 1)
 pico_enable_stdio_uart(${EXECUTABLE_NAME} 0)

@@ -35,9 +35,14 @@ public:
         IGyroscopeController_ref = _IGyroscopeController;
     }
 
+    const GyroscopeDataPack getReading()
+    {
+        return IGyroscopeController_ref->getGyroscopeReading();
+    }
+
     int update()
     {
-        return 0;
+        return -1;
     }
 
 private:

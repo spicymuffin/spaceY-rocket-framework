@@ -15,13 +15,14 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 
-class TextDataSaver : public RocketModule, public Actuator
+class TextDataSaver : public RocketModule,
+                      public Actuator
 {
 public:
-    TextDataSaver(char *_name,
+    TextDataSaver(const char *_name,
                   int _updateFrequency,
-                  char *_directoryPath,
-                  char *_fileNamePostfix,
+                  const char *_directoryPath,
+                  const char *_fileNamePostfix,
                   IFileSystemContol *_IFileSystemContoller) : RocketModule(_name, _updateFrequency),
                                                               Actuator()
     {
