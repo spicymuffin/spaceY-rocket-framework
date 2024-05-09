@@ -22,14 +22,19 @@
 #include "system/Clock.h"
 #include "system/CommunicationSystem.h"
 
-// HardwareLinks
-#include "hardware_link/HardwareLink_mpu6050.h"
-#include "hardware_link/HardwareLink_fuelcelligniter.h"
-#include "hardware_link/HardwareLink_picoonboardled.h"
-#include "hardware_link/HardwareLink_servotype0.h"
-#include "hardware_link/HardwareLink_usb.h"
+// hardware controllers
+#include "hardware_controller/HardwareController_fuelcelligniter.h"
+#include "hardware_controller/HardwareController_mpu6050.h"
+#include "hardware_controller/HardwareController_picoonboardled.h"
+#include "hardware_controller/HardwareController_servotype0.h"
+#include "hardware_controller/HardwareController_usbfilesystem.h"
 
-// Actuators
+// structs
+#include "struct/AccelerometerDataPack.h"
+#include "struct/AngularAccelerometerDataPack.h"
+#include "struct/GyroscopeDataPack.h"
+
+// actuators
 #include "actuator/OnboardLed.h"
 
 // pico sdk
@@ -38,30 +43,21 @@
 #include "pico/stdlib.h"
 
 // constants
+#define TICK_LENGTH_MICROSECONDS MICROSECONDS_PER_SECOND / REFRESH_RATE
+#define TICK_REMINDER_MICROSECONDS MICROSECONDS_PER_SECOND % REFRESH_RATE
+
 // this is all unusuble unless someone makes the USB thing work ;-;
 // const string FLIGHT_LOGS_DIRECTORY = "/data/flight logs";
 // const string IMU_LOGS_DIRECTORY = "/data/IMU logs";
 
 // const string COMMUNICATION_PROTOCOL_PATH = "/communication_protocols/mainprotocol.json";
-
-const uint32_t REFRESH_RATE = 64; // in Hz
-const uint32_t MICROSECONDS_PER_SECOND = 1000000;
-
-// calculated at runtime
-uint32_t TICK_LENGTH_MICROSECONDS = -1;
-uint32_t TICK_REMINDER_MICROSECONDS = -1;
-
 // tick of rocket
 unsigned int tick = 0;
 
 // current tick's start's timestamp
-
 uint32_t currentTickTimestamp = 0; // TODO: change to longs
 // next tick's start's timestamp
 uint32_t nextTickTimestamp = 0;
-
-// if set to true the main loop will run endlessly
-bool ENDLESS = false;
 
 // if [ENDLESS] is set to false main loop will run for [TEST_DURATION] seconds
 uint32_t TEST_DURATION = 10;
@@ -79,11 +75,6 @@ int main(int argc, char *argv[])
         modules[i] = nullptr;
     }
 
-    /// TODO: move to macros?
-    // calculate lengths
-    TICK_LENGTH_MICROSECONDS = MICROSECONDS_PER_SECOND / REFRESH_RATE;
-    TICK_REMINDER_MICROSECONDS = MICROSECONDS_PER_SECOND % REFRESH_RATE;
-
 #pragma region initialize rocket systems
 
     // init clock
@@ -92,6 +83,7 @@ int main(int argc, char *argv[])
     printf("TICK_LENGTH_MICROSECONDS: %zu\n", TICK_LENGTH_MICROSECONDS);
     printf("TICK_REMINDER_MICROSECONDS: %zu\n", TICK_REMINDER_MICROSECONDS);
 
+    /// TODO: fix flight log
     // initialize flight log
     // FlightLogger flightLog = FlightLogger("main flight log", cur_dir + FLIGHT_LOGS_DIRECTORY, "flight_log");
     // printf("%s initialized.\n", flightLog.getName());
@@ -100,16 +92,16 @@ int main(int argc, char *argv[])
 
 #pragma region initialize hardware
 
-    /// TODO: initialize hardware
-    HardwareLink_picoonboardled HL_picoonboardled = HardwareLink_picoonboardled("picoonboardled");
+    HardwareController_picoonboardled HL_picoonboardled = HardwareController_picoonboardled("picoonboardled");
 
 #pragma endregion
 
 #pragma region initialize modules
 
     OnboardLed led = OnboardLed("onboard_led",
-                                16,
-                                &HL_picoonboardled.picoonboardled_setState)
+                                2,
+                                &HL_picoonboardled);
+    modules[0] = &led;
 
 #pragma endregion
 
@@ -121,7 +113,7 @@ int main(int argc, char *argv[])
 
 #pragma endregion
 
-        currentTickTimestamp = mainClock.getNewTimestamp();
+    currentTickTimestamp = mainClock.getNewTimestamp();
     nextTickTimestamp = currentTickTimestamp;
 
     while (ENDLESS ? true : tick <= REFRESH_RATE * TEST_DURATION - 1)
@@ -155,7 +147,10 @@ int main(int argc, char *argv[])
         // update all rocket modules if they need to be updated
         for (int i = 0; i < RM_TABLE_LEN; ++i)
         {
-            if (modules[i] != nullptr && tick % (modules[i])->getUpdateFrequency() == 0)
+            if (modules[i] == nullptr)
+                break;
+
+            if (tick % (modules[i])->getUpdateFrequency() == 0)
             {
                 (modules[i])->update();
             }

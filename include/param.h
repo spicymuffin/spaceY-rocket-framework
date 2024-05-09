@@ -1,6 +1,11 @@
 // main
 #define RM_TABLE_LEN                      32
-// hardwarelink
+
+#define ENDLESS                        false
+#define REFRESH_RATE                      64 // main loop refresh rate (Hz)
+#define MICROSECONDS_PER_SECOND      1000000
+
+// hardwarecontroller
 #define HARDWARE_MAX_NAME_LEN             16
 // rocket module
 #define RM_MAX_NAME_LEN                   16

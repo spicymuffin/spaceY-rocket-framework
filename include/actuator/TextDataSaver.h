@@ -3,8 +3,17 @@
 
 #include "param.h"
 
+// base_class
 #include "base_class/RocketModule.h"
 #include "base_class/Actuator.h"
+
+// dependencies
+#include "control_interface/IFileSystemContol.h"
+
+// pico sdk
+#include <string.h>
+#include <stdio.h>
+#include "pico/stdlib.h"
 
 class TextDataSaver : public RocketModule, public Actuator
 {
@@ -12,15 +21,26 @@ public:
     TextDataSaver(char *_name,
                   int _updateFrequency,
                   char *_directoryPath,
-                  char *_fileNamePostfix);
+                  char *_fileNamePostfix,
+                  IFileSystemContol *_IFileSystemContoller) : RocketModule(_name, _updateFrequency),
+                                                              Actuator()
+    {
+        IFileSystemContoller = _IFileSystemContoller;
+    }
 
-    void dumpLine(char *_line);
+    void dumpLine(char *_line)
+    {
+        /// TODO: dump line using filesystem
+    }
 
-    int update() { return 0; };
+    int update()
+    {
+        return 0;
+    };
 
 private:
     /// TODO: fix filesystem
-    // ofstream dumpFile;
+    IFileSystemContol *IFileSystemContoller;
     char *dumpFilePath;
     char *directoryPath;
 };

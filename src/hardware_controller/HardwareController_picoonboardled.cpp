@@ -1,10 +1,10 @@
 // implementing
-#include "hardware_link/HardwareLink_picoonboardled.h"
+#include "hardware_controller/HardwareController_picoonboardled.h"
 
 #include "param.h"
 
 // base_class
-#include "base_class/HardwareLink.h"
+#include "base_class/HardwareController.h"
 
 // pico sdk
 #include <string.h>
@@ -14,7 +14,8 @@
 #ifndef PICO_DEFAULT_LED_PIN
 #warning blink example requires a board with a regular LED
 #else
-HardwareLink_picoonboardled::HardwareLink_picoonboardled(const char *_hardwareName) : HardwareLink(_hardwareName)
+HardwareController_picoonboardled::HardwareController_picoonboardled(const char *_hardwareName)
+    : HardwareController(_hardwareName)
 {
     LED_PIN = PICO_DEFAULT_LED_PIN;
     gpio_init(LED_PIN);
@@ -22,7 +23,7 @@ HardwareLink_picoonboardled::HardwareLink_picoonboardled(const char *_hardwareNa
 }
 #endif
 
-void HardwareLink_picoonboardled::picoonboardled_setState(const bool _state)
+void HardwareController_picoonboardled::setState(const bool _state)
 {
     if (_state)
     {
@@ -35,7 +36,7 @@ void HardwareLink_picoonboardled::picoonboardled_setState(const bool _state)
     state = _state;
 }
 
-void HardwareLink_picoonboardled::picoonboardled_flipState()
+void HardwareController_picoonboardled::flipState()
 {
     if (state)
     {
@@ -48,7 +49,7 @@ void HardwareLink_picoonboardled::picoonboardled_flipState()
         state = true;
     }
 }
-bool HardwareLink_picoonboardled::picoonboardled_getState()
+bool HardwareController_picoonboardled::getState()
 {
     return state;
 }

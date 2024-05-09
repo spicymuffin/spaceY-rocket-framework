@@ -1,4 +1,4 @@
-#include "base_class/HardwareLink.h"
+#include "base_class/HardwareController.h"
 
 #include "param.h"
 
@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 
-HardwareLink::HardwareLink(const char *_hardwareName)
+HardwareController::HardwareController(const char *_hardwareName)
 {
     strcpy(hardwareName, _hardwareName);
 }

@@ -7,6 +7,9 @@
 #include "base_class/RocketModule.h"
 #include "base_class/Actuator.h"
 
+// dependencies
+#include "control_interface/ILedControl.h"
+
 // pico sdk
 #include <string.h>
 #include <stdio.h>
@@ -17,19 +20,31 @@ class OnboardLed : public RocketModule, public Actuator
 public:
     OnboardLed(const char *_name,
                int _updateFrequency,
-               void (*_setState_HL)(const bool _state),
-               void (*_flipState_HL)(),
-               bool (*_getState_HL)());
-    void setState(const bool _state);
-    void flipState();
-    bool getState();
-    int update() { return 0; }
+               ILedControl *_ILedController) : RocketModule(_name, _updateFrequency),
+                                               Actuator()
+    {
+        ILedController_ref = _ILedController;
+    }
+    void setState(const bool _state)
+    {
+        return ILedController_ref->setState(_state);
+    }
+    void flipState()
+    {
+        return ILedController_ref->flipState();
+    }
+    bool getState()
+    {
+        return ILedController_ref->getState();
+    }
+    int update()
+    {
+        flipState();
+        return 0;
+    }
 
 private:
-    bool state = false;
-    void (*setState_HL)(const bool _state);
-    void (*flipState_HL)();
-    bool (*getState_HL)();
+    ILedControl *ILedController_ref;
 };
 
 #endif

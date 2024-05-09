@@ -51,6 +51,7 @@ add_library(${LIB_NAME} STATIC ${SRC_FILES})
 target_include_directories(${EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(${EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_include_directories(${LIB_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(${LIB_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 target_link_libraries(${EXECUTABLE_NAME} pico_stdlib hardware_gpio ${LIB_NAME})
 target_link_libraries(${LIB_NAME} pico_stdlib hardware_gpio)

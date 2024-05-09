@@ -3,36 +3,53 @@
 
 #include "param.h"
 
+// base_class
 #include "base_class/RocketModule.h"
 #include "base_class/Sensor.h"
+
+// dependencies
 #include "actuator/TextDataSaver.h"
 #include "system/Clock.h"
 
-struct AngularAccelerometerDataPack
-{
-    double acc_x;
-    double acc_y;
-    double acc_z;
-};
+#include "control_interface/IAngularAccelerometerControl.h"
+#include "struct/AngularAccelerometerDataPack.h"
 
-class AngularAccelerometer : public RocketModule, public Sensor
+// pico sdk
+#include <string.h>
+#include <stdio.h>
+#include "pico/stdlib.h"
+
+class AngularAccelerometer : public RocketModule,
+                             public Sensor
 {
 public:
     AngularAccelerometer(const char *_name,
                          int _updateFrequency,
                          TextDataSaver *_textDataSaver,
                          Clock *_clock,
-                         AngularAccelerometerDataPack (*_getNewReading)());
+                         IAngularAccelerometerControl *_IAngularAccelerometerController) : RocketModule(_name, _updateFrequency),
+                                                                                           Sensor()
+    {
+        IAngularAccelerometerController_ref = _IAngularAccelerometerController;
+    }
 
-    int update();
+    int update()
+    {
+        return -1;
+    }
 
-    float getLatestValue();
+    const AngularAccelerometerDataPack getAngularAccelerometerReading()
+    {
+        return IAngularAccelerometerController_ref->getAngularAccelerometerReading();
+    }
 
 private:
+    AngularAccelerometerDataPack latestValue;
+
     TextDataSaver *textDataSaver;
     Clock *clock;
-    AngularAccelerometerDataPack (*getNewReadingHL)();
-    AngularAccelerometerDataPack latestValue;
+
+    IAngularAccelerometerControl *IAngularAccelerometerController_ref;
 };
 
 #endif
