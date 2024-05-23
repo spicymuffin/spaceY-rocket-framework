@@ -39,19 +39,21 @@ if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
 endif()
 
 file(GLOB_RECURSE SRC_FILES "src/*.cpp")
+file(GLOB_RECURSE LIB_FILES "lib/*.cpp")
 
 # add main.cpp
 add_executable(${EXECUTABLE_NAME} main.cpp)
 
 # add all .cpp files recursively in src
-add_library(${LIB_NAME} STATIC ${SRC_FILES})
-
+add_library(${LIB_NAME} STATIC ${SRC_FILES} ${LIB_FILES})
 
 # pull in includes
 target_include_directories(${EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(${EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_include_directories(${EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 target_include_directories(${LIB_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(${LIB_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_include_directories(${LIB_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
 target_link_libraries(${EXECUTABLE_NAME} pico_stdlib hardware_gpio hardware_i2c ${LIB_NAME})
 target_link_libraries(${LIB_NAME} pico_stdlib hardware_gpio hardware_i2c)
