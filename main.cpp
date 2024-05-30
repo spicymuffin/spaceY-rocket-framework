@@ -5,6 +5,7 @@
 #include "pico/cyw43_arch.h"
 #endif
 #include "MPU6050_6Axis_MotionApps_V6_12.h"
+#include "hardware/dma.h"
 
 MPU6050 mpu;
 
@@ -93,6 +94,8 @@ int main()
     initLED();
     waitForUsbConnect();
 
+    
+
     // ================================================================
     // ===                      INITIAL SETUP                       ===
     // ================================================================
@@ -109,8 +112,8 @@ int main()
     // mpu.setZGyroOffset();
 
     /* --- alternatively you can try this (6 loops should be enough) --- */
-    // mpu.CalibrateAccel(6);
-    // mpu.CalibrateGyro(6);
+    mpu.CalibrateAccel(6);
+    mpu.CalibrateGyro(6);
 
     if (devStatus == 0)
     {

@@ -56,7 +56,7 @@ target_include_directories(${LIB_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_include_directories(${LIB_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
 target_link_libraries(${EXECUTABLE_NAME} pico_stdlib hardware_gpio hardware_i2c ${LIB_NAME})
-target_link_libraries(${LIB_NAME} pico_stdlib hardware_gpio hardware_i2c)
+target_link_libraries(${LIB_NAME} pico_stdlib hardware_gpio hardware_i2c hardware_dma)
 
 pico_enable_stdio_usb(${EXECUTABLE_NAME} 1)
 pico_enable_stdio_uart(${EXECUTABLE_NAME} 0)
