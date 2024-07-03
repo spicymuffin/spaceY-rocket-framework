@@ -18,6 +18,7 @@
 // dependencies
 #include "sensor/Accelerometer.h"
 #include "sensor/Gyroscope.h"
+#include "ext_lib/mpu6050/MPU6050.h"
 
 class HardwareController_mpu6050 : public HardwareController,
                                    public IAccelerometerControl,
@@ -29,6 +30,7 @@ public:
     const GyroscopeDataPack getGyroscopeReading() override;
 
 private:
+    MPU6050 mpu;
 protected:
 };
 

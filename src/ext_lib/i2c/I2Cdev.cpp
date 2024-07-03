@@ -30,7 +30,7 @@ THE SOFTWARE.
 ===============================================
 */
 
-#include "I2Cdev.h"
+#include "ext_lib/i2c/I2Cdev.h"
 
 /** Default constructor.
  */
@@ -149,6 +149,9 @@ int8_t I2Cdev::readWord(uint8_t devAddr, uint8_t regAddr, uint16_t *data, uint32
     return readWords(devAddr, regAddr, 1, data, timeout);
 }
 
+#include <stdio.h>
+#include "pico/stdlib.h"
+
 /** Read multiple bytes from an 8-bit device register.
  * @param devAddr I2C slave device address
  * @param regAddr First register regAddr to read from
@@ -157,14 +160,37 @@ int8_t I2Cdev::readWord(uint8_t devAddr, uint8_t regAddr, uint16_t *data, uint32
  * @param timeout Optional read timeout in milliseconds (0 to disable, leave off to use default class value in I2Cdev::readTimeout)
  * @return Number of bytes read (-1 indicates failure)
  */
-int8_t I2Cdev::readBytes(uint8_t devAddr, uint8_t regAddr, uint8_t length, uint8_t *data, uint32_t timeout)
-{
+int8_t I2Cdev::readBytes(uint8_t devAddr, uint8_t regAddr, uint8_t length, uint8_t *data, uint32_t timeout) {
     uint8_t count = 0;
 
-    i2c_write_blocking(i2c_default, devAddr, &regAddr, 1, true);
-    count = i2c_read_timeout_us(i2c_default, devAddr, data, length, false, timeout * 1000);
+    // Calculate timeout in microseconds (us). The timeout provided is in milliseconds (ms),
+    // so we multiply by 1000 to convert it to microseconds.
+    uint8_t timeout_us = timeout * 1000;
 
-    return count;
+    // printf("Attempting to write register address...\n");
+    // Write the register address with a timeout. This will send a start condition, the address,
+    // and then keep the bus for a repeated start by setting `nostop` to true.
+    int write_result = i2c_write_timeout_us(i2c_default, devAddr, &regAddr, 1, true, timeout_us);
+
+    if (write_result != 1) {
+        // If the return value is not 1, it means the write operation was not successful.
+        printf("Failed to write register address with error code: %d\n", write_result);
+        return -1;  // Indicate failure
+    }
+
+    // printf("Register address written, attempting to read data...\n");
+    // Read the data with a timeout. This call will issue a repeated start (or a start if `nostop` was false),
+    // read the requested number of bytes, and then issue a stop condition because `nostop` is false.
+    count = i2c_read_timeout_us(i2c_default, devAddr, data, length, false, timeout_us);
+
+    if (count != length) {
+        // If the read operation did not return the expected number of bytes, handle it as an error.
+        printf("Failed to read all requested bytes, expected: %d, read: %d\n", length, count);
+        return -1;  // Indicate failure
+    }
+
+    // printf("Read operation complete, %d bytes read.\n", count);
+    return count;  // Return the number of bytes read successfully
 }
 
 /** Read multiple words from a 16-bit device register.

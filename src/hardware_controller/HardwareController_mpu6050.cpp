@@ -15,7 +15,15 @@
 #include "sensor/Accelerometer.h"
 #include "sensor/Gyroscope.h"
 
-HardwareController_mpu6050::HardwareController_mpu6050(const char *_hardwareName)
+void init() {
+    
+}
+
+void init_dmp() {
+    
+}
+
+HardwareController_mpu6050::HardwareController_mpu6050(const char* _hardwareName)
     : HardwareController(_hardwareName)
 {
 }

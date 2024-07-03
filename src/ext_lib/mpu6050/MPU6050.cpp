@@ -38,7 +38,7 @@ THE SOFTWARE.
 */
 
 #include "pico/platform.h"
-#include "MPU6050.h"
+#include "ext_lib/mpu6050/MPU6050.h"
 
 #ifndef BUFFER_LENGTH
 // band-aid fix for platforms without Wire-defined BUFFER_LENGTH (removed from some official implementations)
@@ -2937,7 +2937,10 @@ void MPU6050::setStandbyZGyroEnabled(bool enabled)
  */
 uint16_t MPU6050::getFIFOCount()
 {
-    I2Cdev::readBytes(devAddr, MPU6050_RA_FIFO_COUNTH, 2, buffer);
+    int8_t ret = I2Cdev::readBytes(devAddr, MPU6050_RA_FIFO_COUNTH, 2, buffer, 4);
+    if (ret == -1){
+        return (uint16_t)(-1);
+    }
     return (((uint16_t)buffer[0]) << 8) | buffer[1];
 }
 

@@ -6,11 +6,13 @@ include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 # message(STATUS "importing pico extras: $ENV{PICO_EXTRAS_PATH}\\external\\pico_extras_import.cmake")
 # include($ENV{PICO_EXTRAS_PATH}/external/pico_extras_import.cmake)
 
-set(EXECUTABLE_NAME RFW-main)
+set(MAIN_EXECUTABLE_NAME RFW-main)
+set(TEST_EXECUTABLE_NAME RFW-test)
 set(LIB_NAME RFW-lib)
 
 # initialize project
-project(${EXECUTABLE_NAME} C CXX ASM)
+project(${MAIN_EXECUTABLE_NAME} C CXX ASM)
+project(${TEST_EXECUTABLE_NAME} C CXX ASM)
 project(${LIB_NAME} C CXX ASM)
 
 # set standards
@@ -39,26 +41,43 @@ if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
 endif()
 
 file(GLOB_RECURSE SRC_FILES "src/*.cpp")
-file(GLOB_RECURSE LIB_FILES "lib/*.cpp")
 
 # add main.cpp
-add_executable(${EXECUTABLE_NAME} main.cpp)
+add_executable(${MAIN_EXECUTABLE_NAME} main.cpp)
+
+# add test.cpp
+add_executable(${TEST_EXECUTABLE_NAME} test.cpp)
 
 # add all .cpp files recursively in src
-add_library(${LIB_NAME} STATIC ${SRC_FILES} ${LIB_FILES})
+add_library(${LIB_NAME} STATIC ${SRC_FILES})
 
-# pull in includes
-target_include_directories(${EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_include_directories(${EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_include_directories(${EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+# pull in includes for main
+target_include_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+# pull in includes test
+target_include_directories(${TEST_EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(${TEST_EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+# pull in includes for lib
 target_include_directories(${LIB_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(${LIB_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_include_directories(${LIB_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
-target_link_libraries(${EXECUTABLE_NAME} pico_stdlib hardware_gpio hardware_i2c ${LIB_NAME})
+# link libs for main
+target_link_libraries(${MAIN_EXECUTABLE_NAME} pico_stdlib hardware_gpio hardware_i2c ${LIB_NAME})
+
+# link libs for test
+target_link_libraries(${TEST_EXECUTABLE_NAME} pico_stdlib hardware_gpio hardware_i2c ${LIB_NAME})
+
+# link libs for lib
 target_link_libraries(${LIB_NAME} pico_stdlib hardware_gpio hardware_i2c hardware_dma)
 
-pico_enable_stdio_usb(${EXECUTABLE_NAME} 1)
-pico_enable_stdio_uart(${EXECUTABLE_NAME} 0)
+# something related to console output
+pico_enable_stdio_usb(${MAIN_EXECUTABLE_NAME} 1)
+pico_enable_stdio_uart(${MAIN_EXECUTABLE_NAME} 0)
+pico_enable_stdio_usb(${TEST_EXECUTABLE_NAME} 1)
+pico_enable_stdio_uart(${TEST_EXECUTABLE_NAME} 0)
 
-pico_add_extra_outputs(${EXECUTABLE_NAME})
+# give uf2 files
+pico_add_extra_outputs(${MAIN_EXECUTABLE_NAME})
+pico_add_extra_outputs(${TEST_EXECUTABLE_NAME})

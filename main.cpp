@@ -1,190 +1,212 @@
-#include <stdio.h>
+/**
+ * @file main.cpp
+ * @author luigi (luigicussigh59@gmail.com)
+ * @brief spaceY's rocket control software
+ * @version 1.1
+ * @date 2023-11-20
+ *
+ * @copyright lol somepne should pay me for this
+ *
+ *
+ * use cmake to build this crap
+ */
+
+ // param
+#include "debug_param.h"
+#include "param.h"
+
+// base classes
+#include "base_class/RocketModule.h"
+
+// systems
+#include "system/Clock.h"
+#include "system/CommunicationSystem.h"
+#include "system/FlightLogger.h"
+
+// hardware controllers
+#include "hardware_controller/HardwareController_fuelcelligniter.h"
+#include "hardware_controller/HardwareController_mpu6050.h"
+#include "hardware_controller/HardwareController_picoonboardled.h"
+#include "hardware_controller/HardwareController_servotype0.h"
+#include "hardware_controller/HardwareController_usbfilesystem.h"
+
+// structs
+#include "struct/AccelerometerDataPack.h"
+#include "struct/AngularAccelerometerDataPack.h"
+#include "struct/GyroscopeDataPack.h"
+
+// actuators
+#include "actuator/OnboardLed.h"
+#include "actuator/TextDataSaver.h"
+
+// sensors
+#include "sensor/Accelerometer.h"
+#include "sensor/Gyroscope.h"
+
+// pico sdk
 #include "pico/stdlib.h"
-#include "hardware/i2c.h"
-#ifndef PICO_DEFAULT_LED_PIN // PICO w with WiFi
-#include "pico/cyw43_arch.h"
-#endif
-#include "MPU6050_6Axis_MotionApps_V6_12.h"
-#include "hardware/dma.h"
+#include <stdio.h>
+#include <string.h>
 
-MPU6050 mpu;
+// constants
+#define TICK_LENGTH_MICROSECONDS MICROSECONDS_PER_SECOND / REFRESH_RATE
+#define TICK_REMINDER_MICROSECONDS MICROSECONDS_PER_SECOND % REFRESH_RATE
 
-#define OUTPUT_READABLE_YAWPITCHROLL
-// #define OUTPUT_READABLE_REALACCEL
-// #define OUTPUT_READABLE_WORLDACCEL
-// #define OUTPUT_READABLE_CUSTOM
+// this is all unusuble unless someone makes the USB thing work ;-;
+// const string FLIGHT_LOGS_DIRECTORY = "/data/flight logs";
+// const string IMU_LOGS_DIRECTORY = "/data/IMU logs";
 
-bool dmpReady = false;  // set true if DMP init was successful
-uint8_t mpuIntStatus;   // holds actual interrupt status byte from MPU
-uint8_t devStatus;      // return status after each device operation (0 = success, !0 = error)
-uint16_t packetSize;    // expected DMP packet size (default is 42 bytes)
-uint16_t fifoCount;     // count of all bytes currently in FIFO
-uint8_t fifoBuffer[64]; // FIFO storage buffer
+// const string COMMUNICATION_PROTOCOL_PATH = "/communication_protocols/mainprotocol.json";
+// tick of rocket
+unsigned int tick = 0;
 
-Quaternion q;        // [w, x, y, z]         quaternion container
-VectorInt16 aa;      // [x, y, z]            accel sensor measurements
-VectorInt16 gy;      // [x, y, z]            gyro sensor measurements
-VectorInt16 aaReal;  // [x, y, z]            gravity-free accel sensor measurements
-VectorInt16 aaWorld; // [x, y, z]            world-frame accel sensor measurements
-VectorFloat gravity; // [x, y, z]            gravity vector
-float euler[3];      // [psi, theta, phi]    Euler angle container
-float ypr[3];        // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
-float yaw, pitch, roll;
+// current tick's start's timestamp
+uint32_t currentTickTimestamp = 0; // TODO: change to longs
+// next tick's start's timestamp
+uint32_t nextTickTimestamp = 0;
 
-volatile bool mpuInterrupt = false; // indicates whether MPU interrupt pin has gone high
-void dmpDataReady()
+// if [ENDLESS] is set to false main loop will run for [TEST_DURATION] seconds
+uint32_t TEST_DURATION = 10;
+
+RocketModule* modules[RM_TABLE_LEN];
+
+int main(int argc, char* argv[])
 {
-    mpuInterrupt = true;
-}
+    #if DBGMSG_INITIALIZATION
 
-void initLED()
-{
-#ifndef PICO_DEFAULT_LED_PIN // PICO w with WiFi
-    printf("we have board with wifi (pico w) \n");
-    if (cyw43_arch_init())
+    // blink the pico's led until usb connection is established
+    while (!stdio_usb_connected())
     {
-        printf("WiFi init failed");
-        exit(3);
+        printf("waiting for usb connection...");
+        sleep_ms(500);
     }
-#else
-    printf("we have board without wifi\n");
-    gpio_init(PICO_DEFAULT_LED_PIN);
-    gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
-#endif // PICO_DEFAULT_LED_PIN
 
-} // initLED()
+    printf("intitializing...\n");
+    #endif
 
-void waitForUsbConnect()
-{
-#ifdef _PICO_STDIO_USB_H // We are using PICO_STDIO_USB. Have to wait for connection.
-
-#ifndef PICO_DEFAULT_LED_PIN
-    while (!stdio_usb_connected())
-    { // blink the pico's led until usb connection is established
-        cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
-        sleep_ms(250);
-        cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
-        sleep_ms(250);
-    }
-#else
-    while (!stdio_usb_connected())
-    { // blink the pico's led until usb connection is established
-        gpio_put(PICO_DEFAULT_LED_PIN, 0);
-        sleep_ms(250);
-        gpio_put(PICO_DEFAULT_LED_PIN, 1);
-        sleep_ms(250);
-    }
-#endif // PICO_DEFAULT_LED_PIN
-#endif // _PICO_STDIO_USB_H
-} //  waitForUsbConnect
-
-int main()
-{
     stdio_init_all();
-    // This example will use I2C0 on the default SDA and SCL (pins 6, 7 on a Pico)
-    i2c_init(i2c_default, 400 * 1000);
-    gpio_set_function(PICO_DEFAULT_I2C_SDA_PIN, GPIO_FUNC_I2C);
-    gpio_set_function(PICO_DEFAULT_I2C_SCL_PIN, GPIO_FUNC_I2C);
-    gpio_pull_up(PICO_DEFAULT_I2C_SDA_PIN);
-    gpio_pull_up(PICO_DEFAULT_I2C_SCL_PIN);
-    // Make the I2C pins available to picotool
 
-    // setup blink led
-    // setup blink led
-    initLED();
-    waitForUsbConnect();
-
-    
-
-    // ================================================================
-    // ===                      INITIAL SETUP                       ===
-    // ================================================================
-
-    mpu.initialize();
-    devStatus = mpu.dmpInitialize();
-
-    /* --- if you have calibration data then set the sensor offsets here --- */
-    // mpu.setXAccelOffset();
-    // mpu.setYAccelOffset();
-    // mpu.setZAccelOffset();
-    // mpu.setXGyroOffset();
-    // mpu.setYGyroOffset();
-    // mpu.setZGyroOffset();
-
-    /* --- alternatively you can try this (6 loops should be enough) --- */
-    mpu.CalibrateAccel(6);
-    mpu.CalibrateGyro(6);
-
-    if (devStatus == 0)
+    for (int i = 0; i < RM_TABLE_LEN; i++)
     {
-        mpu.setDMPEnabled(true); // turn on the DMP, now that it's ready
-        mpuIntStatus = mpu.getIntStatus();
-        dmpReady = true;                         // set our DMP Ready flag so the main loop() function knows it's okay to use it
-        packetSize = mpu.dmpGetFIFOPacketSize(); // get expected DMP packet size for later comparison
+        modules[i] = nullptr;
     }
-    else
-    { // ERROR!        1 = initial memory load failed         2 = DMP configuration updates failed        (if it's going to break, usually the code will be 1)
-        printf("DMP Initialization failed (code %d)", devStatus);
-        sleep_ms(2000);
-    }
-    yaw = 0.0;
-    pitch = 0.0;
-    roll = 0.0;
 
-    // ================================================================
-    // ===                    MAIN PROGRAM LOOP                     ===
-    // ================================================================
+    #pragma region initialize rocket systems
 
-    while (1)
+    // init clock
+    Clock clock = Clock();
+
+    #if DBGMSG_INITIALIZATION
+    printf("system clock initialized.\n");
+    printf("TICK_LENGTH_MICROSECONDS: %zu\n", TICK_LENGTH_MICROSECONDS);
+    printf("TICK_REMINDER_MICROSECONDS: %zu\n", TICK_REMINDER_MICROSECONDS);
+    #endif
+
+    /// TODO: fix flight log
+    // initialize flight log
+    // FlightLogger flightLog = FlightLogger("main flight log", cur_dir + FLIGHT_LOGS_DIRECTORY, "flight_log");
+    // printf("%s initialized.\n", flightLog.getName());
+
+    #pragma endregion
+
+    #pragma region initialize hardware
+
+    HardwareController_usbfilesystem HC_usbfilesystem = HardwareController_usbfilesystem("usbfilesystem");
+    HardwareController_picoonboardled HC_picoonboardled = HardwareController_picoonboardled("picoonboardled");
+    HardwareController_mpu6050 HC_mpu6050 = HardwareController_mpu6050("mpu6050");
+
+    #pragma endregion
+
+    #pragma region initialize modules
+
+    OnboardLed led = OnboardLed("onboard_led",
+        2,
+        &HC_picoonboardled);
+    modules[0] = &led;
+
+    TextDataSaver kinem_data_tds = TextDataSaver("kinem_data_tds",
+        -1,
+        "",
+        "",
+        &HC_usbfilesystem);
+    modules[1] = &kinem_data_tds;
+
+    Accelerometer accelerometer = Accelerometer("main_accm",
+        -1,
+        nullptr,
+        &clock,
+        &HC_mpu6050);
+    modules[2] = &accelerometer;
+
+    #pragma endregion
+
+    #pragma region intialize communication systems
+
+    // vector<RocketModule *> mainCommuniationSystem_Modules = {};
+    //  init main Communication System
+    // CommunicationSystem mainCommunicationSystem = CommunicationSystem("main communication system", 10, mainCommuniationSystem_Modules, cur_dir + COMMUNICATION_PROTOCOL_PATH);
+
+    #pragma endregion
+
+    currentTickTimestamp = clock.getNewTimestamp();
+    nextTickTimestamp = currentTickTimestamp;
+
+    while (ENDLESS ? true : tick <= REFRESH_RATE * TEST_DURATION - 1)
     {
+        // record this tick's start's timestamp
+        currentTickTimestamp = clock.getNewTimestamp();
 
-        if (!dmpReady)
-            ; // if programming failed, don't try to do anything
-        mpuInterrupt = true;
-        fifoCount = mpu.getFIFOCount();                 // get current FIFO count
-        if ((mpuIntStatus & 0x10) || fifoCount == 1024) // check for overflow (this should never happen unless our code is too inefficient)
+        // calculate when next tick should start
+        nextTickTimestamp += TICK_LENGTH_MICROSECONDS;
+
+        // sometimes TICK_LENGTH_MICROSECONDS isnt a natural number
+        // so we have to account for that
+        if (tick % REFRESH_RATE == 0)
         {
-            mpu.resetFIFO(); // reset so we can continue cleanly
-            printf("FIFO overflow!");
+            nextTickTimestamp += TICK_REMINDER_MICROSECONDS;
         }
-        else if (mpuIntStatus & 0x01) // otherwise, check for DMP data ready interrupt (this should happen frequently)
+
+        // debug stuff
+        #if DBGMSG_TICK_SYSTEM
+        printf("tick no. %u\n", tick);
+        #endif
+
+        uint32_t tickStartTimestamp;
+        uint32_t tickEndTimestamp;
+
+        // profiling stuff
+        tickStartTimestamp = clock.getNewTimestamp();
+
+        /// TODO: update CommunicationSystem
+
+        // mainCommunicationSystem.update();
+
+        // update all rocket modules if they need to be updated
+        for (int i = 0; i < RM_TABLE_LEN; ++i)
         {
-            while (fifoCount < packetSize)
-                fifoCount = mpu.getFIFOCount();       // wait for correct available data length, should be a VERY short wait
-            mpu.getFIFOBytes(fifoBuffer, packetSize); // read a packet from FIFO
-            fifoCount -= packetSize;                  // track FIFO count here in case there is > 1 packet available
-#ifdef OUTPUT_READABLE_YAWPITCHROLL                   // display Euler angles in degrees
-            mpu.dmpGetQuaternion(&q, fifoBuffer);
-            mpu.dmpGetGravity(&gravity, &q);
-            mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
-            yaw = ypr[0] * 180 / PI;
-            pitch = ypr[1] * 180 / PI;
-            roll = ypr[2] * 180 / PI;
-            printf("ypr: %f,\t %f,\t %f\n", yaw, pitch, roll);
-#endif
-#ifdef OUTPUT_READABLE_REALACCEL
-            // display real acceleration, adjusted to remove gravity
-            mpu.dmpGetQuaternion(&q, fifoBuffer);
-            mpu.dmpGetAccel(&aa, fifoBuffer);
-            mpu.dmpGetGravity(&gravity, &q);
-            mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
-            printf("areal: %d,\t %d,\t %d\n", aaReal.x, aaReal.y, aaReal.z);
-#endif
-#ifdef OUTPUT_READABLE_WORLDACCEL
-            // display initial world-frame acceleration, adjusted to remove gravity
-            // and rotated based on known orientation from quaternion
-            mpu.dmpGetQuaternion(&q, fifoBuffer);
-            mpu.dmpGetAccel(&aa, fifoBuffer);
-            mpu.dmpGetGravity(&gravity, &q);
-            mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
-            mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q);
-            printf("aworld: %d,\t %d,\t %d\n", aaWorld.x, aaWorld.y, aaWorld.z);
-#endif
-#ifdef OUTPUT_READABLE_CUSTOM
-            mpu.dmpGetQuaternion(&q, fifoBuffer);
-            printf("W: %f\t X: %f\t Y: %f\t Z: %f\n", q.w, q.x, q.y, q.z);
-#endif
+            if (modules[i] == nullptr)
+                break;
+
+            if (tick % (modules[i])->getUpdateFrequency() == 0)
+            {
+                (modules[i])->update();
+            }
         }
+
+        // profiling stuff
+        tickEndTimestamp = clock.getNewTimestamp();
+
+        #if DBGMSG_TICK_SYSTEM
+        printf("execution completed in %zu microseconds (%f%% of time used)\n", tickEndTimestamp - tickStartTimestamp, ((float)(tickEndTimestamp - tickStartTimestamp) / (float)TICK_LENGTH_MICROSECONDS) * 100);
+        printf("waiting %zu microseconds to end of tick...\n", nextTickTimestamp - tickEndTimestamp);
+        #endif
+
+        // exec completed, we need to wait
+        while (currentTickTimestamp < nextTickTimestamp)
+        {
+            currentTickTimestamp = clock.getNewTimestamp();
+        }
+        ++tick;
     }
 
     return 0;
