@@ -19,7 +19,7 @@ class HardwareController_servotype0 : public HardwareController,
 {
 public:
     HardwareController_servotype0(char* _hardwaremodelName);
-    void setAngle(int _angle) override;
+    void set_angle(int _angle) override;
 
 private:
 protected:

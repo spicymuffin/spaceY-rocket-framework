@@ -23,7 +23,7 @@ HardwareController_picoonboardled::HardwareController_picoonboardled(const char*
 }
 #endif
 
-void HardwareController_picoonboardled::setState(const bool _state)
+void HardwareController_picoonboardled::set_state(const bool _state)
 {
     if (_state)
     {
@@ -36,7 +36,7 @@ void HardwareController_picoonboardled::setState(const bool _state)
     state = _state;
 }
 
-void HardwareController_picoonboardled::flipState()
+void HardwareController_picoonboardled::flip_state()
 {
     if (state)
     {
@@ -50,7 +50,7 @@ void HardwareController_picoonboardled::flipState()
     }
 }
 
-const bool HardwareController_picoonboardled::getState()
+const bool HardwareController_picoonboardled::get_state()
 {
     return state;
 }

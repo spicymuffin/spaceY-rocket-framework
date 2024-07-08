@@ -39,7 +39,7 @@ public:
     }
 
 private:
-    float latestValue;
+    float latest_value;
 
     TextDataSaver* textDataSaver_ref;
     Clock* clock_ref;

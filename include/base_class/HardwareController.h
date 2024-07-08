@@ -6,13 +6,13 @@
 class HardwareController
 {
 public:
-    HardwareController(const char* _hardwareName);
-    const int getUpdateFrequency() const;
+    HardwareController(const char* _hardware_name);
+    const int get_update_frequency() const;
     virtual const int update();
 private:
-    int updateFrequency;
+    int update_frequency;
 protected:
-    char hardwareName[HARDWARE_MAX_NAME_LEN] = "";
+    char hardware_name[HARDWARE_MAX_NAME_LEN] = "";
 };
 
 #endif

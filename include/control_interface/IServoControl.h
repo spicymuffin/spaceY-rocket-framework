@@ -4,7 +4,7 @@
 class IServoControl
 {
 public:
-    virtual void setAngle(int _angle) = 0;
+    virtual void set_angle(int _angle) = 0;
 };
 
 #endif

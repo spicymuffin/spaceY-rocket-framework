@@ -4,7 +4,7 @@
 class IAltimeterControl
 {
 public:
-    const float getAltimeterReading() { return 0; }
+    const float get_altimeter_reading() { return 0; }
     virtual ~IAltimeterControl() {}
 };
 

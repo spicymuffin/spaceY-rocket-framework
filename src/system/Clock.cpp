@@ -9,13 +9,13 @@
 
 Clock::Clock() {};
 
-const uint32_t Clock::getNewTimestamp()
+const uint32_t Clock::get_new_ts()
 {
     this->update();
     return current_ts;
 };
 
-const uint32_t Clock::getTimestamp() const
+const uint32_t Clock::get_ts() const
 {
     return current_ts;
 }

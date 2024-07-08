@@ -17,7 +17,7 @@ public:
      * action log entry. used by modules to describe what happened at given timestamp
      * [timestamp]. [content] contains data on what happened.
      */
-    struct actionEntry
+    struct ActionEntry
     {
         long long timestamp;
         char content[ACTION_ENTRY_MAX_LEN];
@@ -28,11 +28,11 @@ public:
      * module's tick's information container. [moduleName] is the owner-module's name.
      * [buffer] is the action entries that happened during tick no. [tickNumber]
      */
-    struct moduleTickLog
+    struct ModuleTickLog
     {
         int tickNumber;
         char* moduleName;
-        actionEntry buffer[MAX_ACTION_ENTRIES_PER_TICK];
+        ActionEntry buffer[MAX_ACTION_ENTRIES_PER_TICK];
     };
 
     /**
@@ -51,7 +51,7 @@ public:
      *
      * @return char* the name of the flight logger object
      */
-    char* getName();
+    char* get_name();
 
     /**
      * @brief dumps buffer contents generated during this tick to a file
@@ -60,20 +60,20 @@ public:
     void dumpTickBuffer();
 
     /**
-     * @brief appends a moduleTickLog struct to buffer
+     * @brief appends a ModuleTickLog struct to buffer
      *
-     * @param _moduleTickLog moduleTickLog to append
+     * @param _moduleTickLog ModuleTickLog to append
      */
-    void appendToTickBuffer(moduleTickLog _moduleTickLog);
+    void appendToTickBuffer(ModuleTickLog _moduleTickLog);
 
 private:
     /// TODO: fix filesystem
     // ofstream dumpFile;
-    char* dumpFilePath;
-    char* directoryPath;
+    char* filepath;
+    char* dirpath;
 
     /// TODO: dump to file asap
-    moduleTickLog tickBuffer[32];
+    ModuleTickLog tickBuffer[32];
     char* name;
 };
 

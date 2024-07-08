@@ -7,14 +7,14 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 
-HardwareController::HardwareController(const char* _hardwareName)
+HardwareController::HardwareController(const char* _hardware_name)
 {
-    strcpy(hardwareName, _hardwareName);
+    strcpy(hardware_name, _hardware_name);
 }
 
-const int HardwareController::getUpdateFrequency() const
+const int HardwareController::get_update_frequency() const
 {
-    return updateFrequency;
+    return update_frequency;
 }
 
 const int HardwareController::update()

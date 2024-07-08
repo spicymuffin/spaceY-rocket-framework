@@ -29,11 +29,11 @@ public:
     /// TODO: add open sensitivity parameter(s)
     ParachuteDeployer(
         const char* _name,
-        int _updateFrequency,
+        int _update_frequency,
         Accelerometer* _accelerometer,
         Gyroscope* _gyroscope,
         IServoControl* _IServoController) :
-        RocketModule(_name, _updateFrequency),
+        RocketModule(_name, _update_frequency),
         Actuator()
     {
         IServoController_ref = _IServoController;
@@ -41,7 +41,7 @@ public:
 
     void deployParachute()
     {
-        IServoController_ref->setAngle(PARACHUTE_OPENED_SERVO_ANGLE);
+        IServoController_ref->set_angle(PARACHUTE_OPENED_SERVO_ANGLE);
     }
 
     int update()

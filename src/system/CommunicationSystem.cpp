@@ -15,9 +15,9 @@ CommunicationSystem::CommunicationSystem(const char* _name,
     const char* _communicationProtocolPath)
 {
     strcpy(name, _name);
-    updateFrequency = _updateFrequency;
+    update_frequency = _updateFrequency;
     accessible = _accessible;
-    strcpy(communicationProtocolPath, _communicationProtocolPath);
+    strcpy(communication_protocol_path, _communicationProtocolPath);
 }
 
 void CommunicationSystem::update()
@@ -25,7 +25,7 @@ void CommunicationSystem::update()
     /// TODO: communicate with physical thing and read.
 }
 
-int CommunicationSystem::sendBytes(char* a, int len)
+int CommunicationSystem::send_bytes(char* a, int len)
 {
     return 0;
 }

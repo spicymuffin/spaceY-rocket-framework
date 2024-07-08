@@ -21,9 +21,9 @@ class HardwareController_picoonboardled
 {
 public:
     HardwareController_picoonboardled(const char* _hardwareName);
-    void setState(const bool _state) override;
-    void flipState() override;
-    const bool getState() override;
+    void set_state(const bool _state) override;
+    void flip_state() override;
+    const bool get_state() override;
     const int update() override;
 
 private:

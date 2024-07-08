@@ -20,10 +20,10 @@ class TextDataSaver : public RocketModule,
 {
 public:
     TextDataSaver(const char* _name,
-        int _updateFrequency,
-        const char* _directoryPath,
-        const char* _fileNamePostfix,
-        IFileSystemContol* _IFileSystemContoller) : RocketModule(_name, _updateFrequency),
+        int _update_frequency,
+        const char* _directory_path,
+        const char* _filename_postfix,
+        IFileSystemContol* _IFileSystemContoller) : RocketModule(_name, _update_frequency),
         Actuator()
     {
         IFileSystemContoller = _IFileSystemContoller;
@@ -42,8 +42,8 @@ public:
 private:
     /// TODO: fix filesystem
     IFileSystemContol* IFileSystemContoller;
-    char* dumpFilePath;
-    char* directoryPath;
+    char* filepath;
+    char* dirpath;
 };
 
 #endif

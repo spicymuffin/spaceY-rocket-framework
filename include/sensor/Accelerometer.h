@@ -24,10 +24,10 @@ class Accelerometer : public RocketModule,
 {
 public:
     Accelerometer(const char* _name,
-        int _updateFrequency,
+        int _update_frequency,
         TextDataSaver* _textDataSaver,
         Clock* _clock,
-        IAccelerometerControl* _IAccelerometerController) : RocketModule(_name, _updateFrequency),
+        IAccelerometerControl* _IAccelerometerController) : RocketModule(_name, _update_frequency),
         Sensor()
     {
         textDataSaver_ref = _textDataSaver;
@@ -37,7 +37,7 @@ public:
 
     const AccelerometerDataPack getReading()
     {
-        return IAccelerometerControl_ref->getAccelerometerReading();
+        return IAccelerometerControl_ref->get_accelerometer_reading();
     }
 
     int update()
@@ -46,7 +46,7 @@ public:
     }
 
 private:
-    AccelerometerDataPack latestValue;
+    AccelerometerDataPack latest_value;
 
     TextDataSaver* textDataSaver_ref;
     Clock* clock_ref;

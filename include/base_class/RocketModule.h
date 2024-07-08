@@ -26,22 +26,22 @@ public:
      * @brief Construct a new RocketModule object
      *
      * @param _name name of module
-     * @param _updateFrequency update frequency of module (set -1 to imply make module non-updating)
+     * @param _update_frequency update frequency of module (set -1 to imply make module non-updating)
      */
     RocketModule(const char* _name,
-        int _updateFrequency);
+        int _update_frequency);
     /**
      * @brief Get name the RocketModule
      *
      * @return char* name of the RocketModule
      */
-    char* getName();
+    char* get_name();
     /**
      * @brief Get update frequency of the RocketModule
      *
      * @return int update frequency of the RocketModule
      */
-    int getUpdateFrequency() const;
+    int get_update_frequency() const;
     /**
      * @brief execute RocketModule's code
      *
@@ -51,7 +51,7 @@ public:
 
 protected:
     int tick;
-    int updateFrequency;
+    int update_frequency;
     char name[RM_MAX_NAME_LEN] = "";
 
 private:

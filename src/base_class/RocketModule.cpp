@@ -7,13 +7,13 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 
-char* RocketModule::getName() { return name; };
-int RocketModule::getUpdateFrequency() const { return updateFrequency; };
+char* RocketModule::get_name() { return name; };
+int RocketModule::get_update_frequency() const { return update_frequency; };
 
-RocketModule::RocketModule(const char* _name, int _updateFrequency)
+RocketModule::RocketModule(const char* _name, int _update_frequency)
 {
     strcpy(name, _name);
-    updateFrequency = _updateFrequency;
+    update_frequency = _update_frequency;
 };
 
 int RocketModule::update()

@@ -30,13 +30,13 @@ public:
      *
      * @return uint32_t current timestamp
      */
-    const uint32_t getNewTimestamp();
+    const uint32_t get_new_ts();
     /**
      * @brief get the most recent cached timestamp
      *
      * @return uint32_t most recent timestamp
      */
-    const uint32_t getTimestamp() const;
+    const uint32_t get_ts() const;
     /**
      * @brief updates currentTimestamp
      *

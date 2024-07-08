@@ -37,7 +37,7 @@ public:
 
     const GyroscopeDataPack getReading()
     {
-        return IGyroscopeController_ref->getGyroscopeReading();
+        return IGyroscopeController_ref->get_gyroscope_reading();
     }
 
     int update()
@@ -46,7 +46,7 @@ public:
     }
 
 private:
-    GyroscopeDataPack latestValue;
+    GyroscopeDataPack latest_value;
 
     TextDataSaver* textDataSaver_ref;
     Clock* clock_ref;

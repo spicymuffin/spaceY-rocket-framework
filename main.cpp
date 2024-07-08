@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
     /// TODO: fix flight log
     // initialize flight log
     // FlightLogger flightLog = FlightLogger("main flight log", cur_dir + FLIGHT_LOGS_DIRECTORY, "flight_log");
-    // printf("%s initialized.\n", flightLog.getName());
+    // printf("%s initialized.\n", flightLog.get_name());
 
     #pragma endregion
 
@@ -158,13 +158,13 @@ int main(int argc, char* argv[])
 
     #pragma endregion
 
-    current_tick_ts = clock.getNewTimestamp();
+    current_tick_ts = clock.get_new_ts();
     next_tick_ts = current_tick_ts;
 
     while (ENDLESS ? true : tick <= REFRESH_RATE * TEST_DURATION - 1)
     {
         // record this tick's start's timestamp
-        current_tick_ts = clock.getNewTimestamp();
+        current_tick_ts = clock.get_new_ts();
 
         // calculate when next tick should start
         next_tick_ts += TICK_LENGTH_MICROSECONDS;
@@ -185,7 +185,7 @@ int main(int argc, char* argv[])
         uint32_t tick_end_ts;
 
         // profiling stuff
-        tick_start_ts = clock.getNewTimestamp();
+        tick_start_ts = clock.get_new_ts();
 
         /// TODO: update CommunicationSystem
 
@@ -197,7 +197,7 @@ int main(int argc, char* argv[])
             if (hctable[i] == nullptr)
                 break;
 
-            if (tick % (hctable[i])->getUpdateFrequency() == 0)
+            if (tick % (hctable[i])->get_update_frequency() == 0)
             {
                 (hctable[i])->update();
             }
@@ -209,7 +209,7 @@ int main(int argc, char* argv[])
             if (rmtable[i] == nullptr)
                 break;
 
-            if (tick % (rmtable[i])->getUpdateFrequency() == 0)
+            if (tick % (rmtable[i])->get_update_frequency() == 0)
             {
                 (rmtable[i])->update();
             }
@@ -224,7 +224,7 @@ int main(int argc, char* argv[])
 
 
         // profiling stuff
-        tick_end_ts = clock.getNewTimestamp();
+        tick_end_ts = clock.get_new_ts();
 
         #if DBGMSG_TICK_SYSTEM
         printf("execution completed in %zu microseconds (%f%% of time used)\n", tick_end_ts - tick_start_ts, ((float)(tick_end_ts - tick_start_ts) / (float)TICK_LENGTH_MICROSECONDS) * 100);
@@ -234,7 +234,7 @@ int main(int argc, char* argv[])
         // exec completed, we need to wait
         while (current_tick_ts < next_tick_ts)
         {
-            current_tick_ts = clock.getNewTimestamp();
+            current_tick_ts = clock.get_new_ts();
         }
         ++tick;
     }

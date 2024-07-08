@@ -19,27 +19,27 @@ class OnboardLed : public RocketModule, public Actuator
 {
 public:
     OnboardLed(const char* _name,
-        int _updateFrequency,
-        ILedControl* _ILedController) : RocketModule(_name, _updateFrequency),
+        int _update_frequency,
+        ILedControl* _ILedController) : RocketModule(_name, _update_frequency),
         Actuator()
     {
         ILedController_ref = _ILedController;
     }
-    void setState(const bool _state)
+    void set_state(const bool _state)
     {
-        return ILedController_ref->setState(_state);
+        return ILedController_ref->set_state(_state);
     }
-    void flipState()
+    void flip_state()
     {
-        return ILedController_ref->flipState();
+        return ILedController_ref->flip_state();
     }
-    bool getState()
+    bool get_state()
     {
-        return ILedController_ref->getState();
+        return ILedController_ref->get_state();
     }
     int update()
     {
-        flipState();
+        flip_state();
         return 0;
     }
 

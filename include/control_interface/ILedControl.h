@@ -4,9 +4,9 @@
 class ILedControl
 {
 public:
-    virtual void setState(const bool _state) = 0;
-    virtual void flipState() = 0;
-    virtual const bool getState() = 0;
+    virtual void set_state(const bool _state) = 0;
+    virtual void flip_state() = 0;
+    virtual const bool get_state() = 0;
     virtual ~ILedControl() {}
 };
 

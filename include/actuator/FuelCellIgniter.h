@@ -25,7 +25,7 @@ public:
     void ignite()
     {
     }
-    void getIgnitionState()
+    void get_ignition_state()
     {
     }
     int update() { return 0; }
