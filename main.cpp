@@ -5,15 +5,18 @@
  * @version 1.1
  * @date 2023-11-20
  *
- * @copyright lol somepne should pay me for this
+ * @copyright lol someone should pay me for this
  *
  *
  * use cmake to build this crap
- */
+**/
 
- // param
+// param
 #include "debug_param.h"
 #include "param.h"
+
+// constants
+#include "constants.h"
 
 // base classes
 #include "base_class/RocketModule.h"
@@ -61,14 +64,12 @@
 unsigned int tick = 0;
 
 // current tick's start's timestamp
-uint32_t currentTickTimestamp = 0; // TODO: change to longs
+uint32_t current_tick_ts = 0; // TODO: change to longs
 // next tick's start's timestamp
-uint32_t nextTickTimestamp = 0;
+uint32_t next_tick_ts = 0;
 
-// if [ENDLESS] is set to false main loop will run for [TEST_DURATION] seconds
-uint32_t TEST_DURATION = 10;
-
-RocketModule* modules[RM_TABLE_LEN];
+RocketModule* rmtable[RM_TABLE_LEN];
+HardwareController* hctable[HC_TABLE_LEN];
 
 int main(int argc, char* argv[])
 {
@@ -88,7 +89,12 @@ int main(int argc, char* argv[])
 
     for (int i = 0; i < RM_TABLE_LEN; i++)
     {
-        modules[i] = nullptr;
+        rmtable[i] = nullptr;
+    }
+
+    for (int i = 0; i < HC_TABLE_LEN; i++)
+    {
+        hctable[i] = nullptr;
     }
 
     #pragma region initialize rocket systems
@@ -113,7 +119,11 @@ int main(int argc, char* argv[])
 
     HardwareController_usbfilesystem HC_usbfilesystem = HardwareController_usbfilesystem("usbfilesystem");
     HardwareController_picoonboardled HC_picoonboardled = HardwareController_picoonboardled("picoonboardled");
-    HardwareController_mpu6050 HC_mpu6050 = HardwareController_mpu6050("mpu6050");
+    HardwareController_mpu6050 HC_mpu6050 = HardwareController_mpu6050("mpu6050", i2c_default, 400 * 1000);
+
+    hctable[0] = &HC_usbfilesystem;
+    hctable[1] = &HC_picoonboardled;
+    hctable[2] = &HC_mpu6050;
 
     #pragma endregion
 
@@ -122,21 +132,21 @@ int main(int argc, char* argv[])
     OnboardLed led = OnboardLed("onboard_led",
         2,
         &HC_picoonboardled);
-    modules[0] = &led;
+    rmtable[0] = &led;
 
     TextDataSaver kinem_data_tds = TextDataSaver("kinem_data_tds",
         -1,
         "",
         "",
         &HC_usbfilesystem);
-    modules[1] = &kinem_data_tds;
+    rmtable[1] = &kinem_data_tds;
 
     Accelerometer accelerometer = Accelerometer("main_accm",
         -1,
         nullptr,
         &clock,
         &HC_mpu6050);
-    modules[2] = &accelerometer;
+    rmtable[2] = &accelerometer;
 
     #pragma endregion
 
@@ -148,22 +158,22 @@ int main(int argc, char* argv[])
 
     #pragma endregion
 
-    currentTickTimestamp = clock.getNewTimestamp();
-    nextTickTimestamp = currentTickTimestamp;
+    current_tick_ts = clock.getNewTimestamp();
+    next_tick_ts = current_tick_ts;
 
     while (ENDLESS ? true : tick <= REFRESH_RATE * TEST_DURATION - 1)
     {
         // record this tick's start's timestamp
-        currentTickTimestamp = clock.getNewTimestamp();
+        current_tick_ts = clock.getNewTimestamp();
 
         // calculate when next tick should start
-        nextTickTimestamp += TICK_LENGTH_MICROSECONDS;
+        next_tick_ts += TICK_LENGTH_MICROSECONDS;
 
         // sometimes TICK_LENGTH_MICROSECONDS isnt a natural number
         // so we have to account for that
         if (tick % REFRESH_RATE == 0)
         {
-            nextTickTimestamp += TICK_REMINDER_MICROSECONDS;
+            next_tick_ts += TICK_REMINDER_MICROSECONDS;
         }
 
         // debug stuff
@@ -171,40 +181,60 @@ int main(int argc, char* argv[])
         printf("tick no. %u\n", tick);
         #endif
 
-        uint32_t tickStartTimestamp;
-        uint32_t tickEndTimestamp;
+        uint32_t tick_start_ts;
+        uint32_t tick_end_ts;
 
         // profiling stuff
-        tickStartTimestamp = clock.getNewTimestamp();
+        tick_start_ts = clock.getNewTimestamp();
 
         /// TODO: update CommunicationSystem
 
         // mainCommunicationSystem.update();
 
-        // update all rocket modules if they need to be updated
-        for (int i = 0; i < RM_TABLE_LEN; ++i)
+        // update all hardware controllers if they need to be updated
+        for (int i = 0; i < HC_TABLE_LEN; ++i)
         {
-            if (modules[i] == nullptr)
+            if (hctable[i] == nullptr)
                 break;
 
-            if (tick % (modules[i])->getUpdateFrequency() == 0)
+            if (tick % (hctable[i])->getUpdateFrequency() == 0)
             {
-                (modules[i])->update();
+                (hctable[i])->update();
             }
         }
 
+        // update all rocket modules if they need to be updated
+        for (int i = 0; i < RM_TABLE_LEN; ++i)
+        {
+            if (rmtable[i] == nullptr)
+                break;
+
+            if (tick % (rmtable[i])->getUpdateFrequency() == 0)
+            {
+                (rmtable[i])->update();
+            }
+        }
+
+        // rocket's "mission code". all major operations that
+        // are not related to data processing should be made transparent
+        // by being put here.
+
+
+
+
+
         // profiling stuff
-        tickEndTimestamp = clock.getNewTimestamp();
+        tick_end_ts = clock.getNewTimestamp();
 
         #if DBGMSG_TICK_SYSTEM
-        printf("execution completed in %zu microseconds (%f%% of time used)\n", tickEndTimestamp - tickStartTimestamp, ((float)(tickEndTimestamp - tickStartTimestamp) / (float)TICK_LENGTH_MICROSECONDS) * 100);
-        printf("waiting %zu microseconds to end of tick...\n", nextTickTimestamp - tickEndTimestamp);
+        printf("execution completed in %zu microseconds (%f%% of time used)\n", tick_end_ts - tick_start_ts, ((float)(tick_end_ts - tick_start_ts) / (float)TICK_LENGTH_MICROSECONDS) * 100);
+        printf("waiting %zu microseconds to end of tick...\n", next_tick_ts - tick_end_ts);
         #endif
 
         // exec completed, we need to wait
-        while (currentTickTimestamp < nextTickTimestamp)
+        while (current_tick_ts < next_tick_ts)
         {
-            currentTickTimestamp = clock.getNewTimestamp();
+            current_tick_ts = clock.getNewTimestamp();
         }
         ++tick;
     }

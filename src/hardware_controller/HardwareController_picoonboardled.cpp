@@ -14,7 +14,7 @@
 #ifndef PICO_DEFAULT_LED_PIN
 #warning blink example requires a board with a regular LED
 #else
-HardwareController_picoonboardled::HardwareController_picoonboardled(const char *_hardwareName)
+HardwareController_picoonboardled::HardwareController_picoonboardled(const char* _hardwareName)
     : HardwareController(_hardwareName)
 {
     LED_PIN = PICO_DEFAULT_LED_PIN;
@@ -49,7 +49,13 @@ void HardwareController_picoonboardled::flipState()
         state = true;
     }
 }
-bool HardwareController_picoonboardled::getState()
+
+const bool HardwareController_picoonboardled::getState()
 {
     return state;
+}
+
+const int HardwareController_picoonboardled::update()
+{
+    return 0;
 }

@@ -10,12 +10,18 @@
 #include <string.h>
 #include <stdio.h>
 #include "pico/stdlib.h"
+#include "hardware/i2c.h"
+// #include "hardware/dma.h" // rewrite with dma use?
 
-HardwareController_usbfilesystem::HardwareController_usbfilesystem(const char *_hardwareName)
+// dependcies
+
+HardwareController_usbfilesystem::HardwareController_usbfilesystem(const char* _hardwareName)
     : HardwareController(_hardwareName)
 {
+
 }
 
-void HardwareController_usbfilesystem::open()
+const int HardwareController_usbfilesystem::update()
 {
+    return 0;
 }

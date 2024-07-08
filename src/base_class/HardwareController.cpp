@@ -11,3 +11,7 @@ HardwareController::HardwareController(const char *_hardwareName)
 {
     strcpy(hardwareName, _hardwareName);
 }
+
+const int HardwareController::getUpdateFrequency() const{
+    return updateFrequency;
+}

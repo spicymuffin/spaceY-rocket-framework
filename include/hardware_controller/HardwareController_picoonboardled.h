@@ -23,7 +23,8 @@ public:
     HardwareController_picoonboardled(const char *_hardwareName);
     void setState(const bool _state) override;
     void flipState() override;
-    bool getState() override;
+    const bool getState() override;
+    const int update() override;
 
 private:
     bool state = false;

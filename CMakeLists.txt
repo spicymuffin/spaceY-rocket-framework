@@ -11,9 +11,7 @@ set(TEST_EXECUTABLE_NAME RFW-test)
 set(LIB_NAME RFW-lib)
 
 # initialize project
-project(${MAIN_EXECUTABLE_NAME} C CXX ASM)
-project(${TEST_EXECUTABLE_NAME} C CXX ASM)
-project(${LIB_NAME} C CXX ASM)
+project(RFW VERSION 1.0 DESCRIPTION "SpaceY Rocket Framework" LANGUAGES C CXX ASM)
 
 # set standards
 set(CMAKE_C_STANDARD 11)
@@ -64,10 +62,10 @@ target_include_directories(${LIB_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/inclu
 target_include_directories(${LIB_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 # link libs for main
-target_link_libraries(${MAIN_EXECUTABLE_NAME} pico_stdlib hardware_gpio hardware_i2c ${LIB_NAME})
+target_link_libraries(${MAIN_EXECUTABLE_NAME} pico_stdlib hardware_gpio hardware_i2c ${LIB_NAME} ${LIB_NAME})
 
 # link libs for test
-target_link_libraries(${TEST_EXECUTABLE_NAME} pico_stdlib hardware_gpio hardware_i2c ${LIB_NAME})
+target_link_libraries(${TEST_EXECUTABLE_NAME} pico_stdlib hardware_gpio hardware_i2c ${LIB_NAME} ${LIB_NAME})
 
 # link libs for lib
 target_link_libraries(${LIB_NAME} pico_stdlib hardware_gpio hardware_i2c hardware_dma)

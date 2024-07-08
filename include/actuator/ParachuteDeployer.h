@@ -9,7 +9,6 @@
 
 // dependencies
 #include "sensor/Accelerometer.h"
-#include "sensor/AngularAccelerometer.h"
 #include "sensor/Gyroscope.h"
 
 #include "control_interface/IServoControl.h"
@@ -24,17 +23,18 @@
 #define PARACHUTE_OPENED_SERVO_ANGLE 90
 
 class ParachuteDeployer : public RocketModule,
-                          public Actuator
+    public Actuator
 {
 public:
     /// TODO: add open sensitivity parameter(s)
-    ParachuteDeployer(const char *_name,
-                      int _updateFrequency,
-                      Accelerometer *_accelerometer,
-                      AngularAccelerometer *_angularAccelerometer,
-                      Gyroscope *_gyroscope,
-                      IServoControl *_IServoController) : RocketModule(_name, _updateFrequency),
-                                                          Actuator()
+    ParachuteDeployer(
+        const char* _name,
+        int _updateFrequency,
+        Accelerometer* _accelerometer,
+        Gyroscope* _gyroscope,
+        IServoControl* _IServoController) :
+        RocketModule(_name, _updateFrequency),
+        Actuator()
     {
         IServoController_ref = _IServoController;
     }
@@ -50,10 +50,9 @@ public:
     }
 
 private:
-    Accelerometer *accelerometer_ref;
-    AngularAccelerometer *angularAccelerometer_ref;
-    Gyroscope *gyroscope_ref;
-    IServoControl *IServoController_ref;
+    Accelerometer* accelerometer_ref;
+    Gyroscope* gyroscope_ref;
+    IServoControl* IServoController_ref;
 };
 
 #endif

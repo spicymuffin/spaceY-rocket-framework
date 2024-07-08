@@ -5,6 +5,7 @@
 #include "pico/cyw43_arch.h"
 #endif
 #include "ext_lib/mpu6050/MPU6050_6Axis_MotionApps_V6_12.h"
+#include "ext_lib/mpu6050/MPU6050.h"
 #include "hardware/dma.h"
 
 MPU6050 mpu;
@@ -141,7 +142,7 @@ int main()
         mpuInterrupt = true;
         // printf("starting fifocount transfer\n");
         fifoCount = mpu.getFIFOCount();
-        if (fifoCount == -1)
+        if (fifoCount == (uint16_t)(-1))
         {
             printf("TIMEOUT ERR\n");
             mpu.resetFIFO();
@@ -159,7 +160,7 @@ int main()
             {
                 fifoCount = mpu.getFIFOCount(); // wait for correct available data length, should be a VERY short wait
                 // printf("fifocount iteration. %d\n", fifoCount);
-                if (fifoCount == -1)
+                if (fifoCount == (uint16_t)(-1))
                 {
                     printf("TIMEOUT ERR\n");
                     mpu.resetFIFO();
