@@ -11,7 +11,7 @@
 #define ACCEL_XOUT_H   0x3B
 #define GYRO_XOUT_H    0x43
 
-int16_t read_mpu6050_data(i2c_inst_t *i2c, uint8_t reg)
+int16_t read_mpu6050_data(i2c_inst_t* i2c, uint8_t reg)
 {
     uint8_t data[2];
     i2c_write_blocking(i2c, MPU6050_ADDR, &reg, 1, true); // Set register to read
@@ -19,7 +19,7 @@ int16_t read_mpu6050_data(i2c_inst_t *i2c, uint8_t reg)
     return (int16_t)((data[0] << 8) | data[1]);
 }
 
-float read_temperature(i2c_inst_t *i2c)
+float read_temperature(i2c_inst_t* i2c)
 {
     int16_t raw_temp = read_mpu6050_data(i2c, TEMP_OUT_H);
     return (raw_temp / 340.0) + 36.53;
@@ -35,7 +35,7 @@ int main()
     gpio_pull_up(4); // Enable pull-up resistors
     gpio_pull_up(5);
 
-    uint8_t buf[2] = {PWR_MGMT_1, 0x00}; // Wake up the MPU6050
+    uint8_t buf[2] = { PWR_MGMT_1, 0x00 }; // Wake up the MPU6050
     i2c_write_blocking(i2c0, MPU6050_ADDR, buf, 2, false);
 
     while (1)
@@ -57,7 +57,7 @@ int main()
         // Print all data
         printf("got data in: %zu\n", read_end_time - read_start_time);
         printf("Temp: %.2f C, Accel: (%d, %d, %d), Gyro: (%d, %d, %d)\n",
-               temperature, ax, ay, az, gx, gy, gz);
+            temperature, ax, ay, az, gx, gy, gz);
 
         sleep_ms(100); // Delay for readability
     }

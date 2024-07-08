@@ -19,14 +19,14 @@
 #include "pico/stdlib.h"
 
 class Altimeter : public RocketModule,
-                  public Sensor
+    public Sensor
 {
 public:
-    Altimeter(const char *_name,
-              int _updateFrequency,
-              TextDataSaver *_textDataSaver,
-              Clock *_clock,
-              IAltimeterControl *_IAltimeterController) : RocketModule(_name, _updateFrequency), Sensor()
+    Altimeter(const char* _name,
+        int _updateFrequency,
+        TextDataSaver* _textDataSaver,
+        Clock* _clock,
+        IAltimeterControl* _IAltimeterController) : RocketModule(_name, _updateFrequency), Sensor()
     {
         textDataSaver_ref = _textDataSaver;
         clock_ref = _clock;
@@ -41,10 +41,10 @@ public:
 private:
     float latestValue;
 
-    TextDataSaver *textDataSaver_ref;
-    Clock *clock_ref;
+    TextDataSaver* textDataSaver_ref;
+    Clock* clock_ref;
 
-    IAltimeterControl *IAltimeterController_ref;
+    IAltimeterControl* IAltimeterController_ref;
 };
 
 #endif

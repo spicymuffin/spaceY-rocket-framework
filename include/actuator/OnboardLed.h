@@ -18,10 +18,10 @@
 class OnboardLed : public RocketModule, public Actuator
 {
 public:
-    OnboardLed(const char *_name,
-               int _updateFrequency,
-               ILedControl *_ILedController) : RocketModule(_name, _updateFrequency),
-                                               Actuator()
+    OnboardLed(const char* _name,
+        int _updateFrequency,
+        ILedControl* _ILedController) : RocketModule(_name, _updateFrequency),
+        Actuator()
     {
         ILedController_ref = _ILedController;
     }
@@ -44,7 +44,7 @@ public:
     }
 
 private:
-    ILedControl *ILedController_ref;
+    ILedControl* ILedController_ref;
 };
 
 #endif

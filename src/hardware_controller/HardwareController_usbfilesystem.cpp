@@ -21,6 +21,11 @@ HardwareController_usbfilesystem::HardwareController_usbfilesystem(const char* _
 
 }
 
+void HardwareController_usbfilesystem::open()
+{
+
+}
+
 const int HardwareController_usbfilesystem::update()
 {
     return 0;

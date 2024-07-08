@@ -20,15 +20,15 @@
 #include "pico/stdlib.h"
 
 class Accelerometer : public RocketModule,
-                      public Sensor
+    public Sensor
 {
 public:
-    Accelerometer(const char *_name,
-                  int _updateFrequency,
-                  TextDataSaver *_textDataSaver,
-                  Clock *_clock,
-                  IAccelerometerControl *_IAccelerometerController) : RocketModule(_name, _updateFrequency),
-                                                                      Sensor()
+    Accelerometer(const char* _name,
+        int _updateFrequency,
+        TextDataSaver* _textDataSaver,
+        Clock* _clock,
+        IAccelerometerControl* _IAccelerometerController) : RocketModule(_name, _updateFrequency),
+        Sensor()
     {
         textDataSaver_ref = _textDataSaver;
         clock_ref = _clock;
@@ -48,10 +48,10 @@ public:
 private:
     AccelerometerDataPack latestValue;
 
-    TextDataSaver *textDataSaver_ref;
-    Clock *clock_ref;
+    TextDataSaver* textDataSaver_ref;
+    Clock* clock_ref;
 
-    IAccelerometerControl *IAccelerometerControl_ref;
+    IAccelerometerControl* IAccelerometerControl_ref;
 };
 
 #endif

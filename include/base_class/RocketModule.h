@@ -28,14 +28,14 @@ public:
      * @param _name name of module
      * @param _updateFrequency update frequency of module (set -1 to imply make module non-updating)
      */
-    RocketModule(const char *_name,
-                 int _updateFrequency);
+    RocketModule(const char* _name,
+        int _updateFrequency);
     /**
      * @brief Get name the RocketModule
      *
      * @return char* name of the RocketModule
      */
-    char *getName();
+    char* getName();
     /**
      * @brief Get update frequency of the RocketModule
      *

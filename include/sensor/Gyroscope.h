@@ -20,15 +20,15 @@
 #include "pico/stdlib.h"
 
 class Gyroscope : public RocketModule,
-                  public Sensor
+    public Sensor
 {
 public:
-    Gyroscope(const char *_name,
-              int _updateFrequency,
-              TextDataSaver *_textDataSaver,
-              Clock *_clock,
-              IGyroscopeControl *_IGyroscopeController) : RocketModule(_name, _updateFrequency),
-                                                          Sensor()
+    Gyroscope(const char* _name,
+        int _updateFrequency,
+        TextDataSaver* _textDataSaver,
+        Clock* _clock,
+        IGyroscopeControl* _IGyroscopeController) : RocketModule(_name, _updateFrequency),
+        Sensor()
     {
         textDataSaver_ref = _textDataSaver;
         clock_ref = _clock;
@@ -48,10 +48,10 @@ public:
 private:
     GyroscopeDataPack latestValue;
 
-    TextDataSaver *textDataSaver_ref;
-    Clock *clock_ref;
+    TextDataSaver* textDataSaver_ref;
+    Clock* clock_ref;
 
-    IGyroscopeControl *IGyroscopeController_ref;
+    IGyroscopeControl* IGyroscopeController_ref;
 };
 
 #endif

@@ -15,10 +15,10 @@
 #include "pico/stdlib.h"
 
 class HardwareController_servotype0 : public HardwareController,
-                                      public IServoControl
+    public IServoControl
 {
 public:
-    HardwareController_servotype0(char *_hardwaremodelName);
+    HardwareController_servotype0(char* _hardwaremodelName);
     void setAngle(int _angle) override;
 
 private:

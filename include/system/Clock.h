@@ -46,7 +46,7 @@ public:
 protected:
 private:
     // chrono::high_resolution_clock::time_point currentTimestamp;
-    uint32_t currentTimestamp = 0;
+    uint32_t current_ts = 0;
 };
 
 #endif

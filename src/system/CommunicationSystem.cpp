@@ -9,10 +9,10 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 
-CommunicationSystem::CommunicationSystem(const char *_name,
-                                         int _updateFrequency,
-                                         RocketModule *_accessible,
-                                         const char *_communicationProtocolPath)
+CommunicationSystem::CommunicationSystem(const char* _name,
+    int _updateFrequency,
+    RocketModule* _accessible,
+    const char* _communicationProtocolPath)
 {
     strcpy(name, _name);
     updateFrequency = _updateFrequency;
@@ -25,10 +25,12 @@ void CommunicationSystem::update()
     /// TODO: communicate with physical thing and read.
 }
 
-int CommunicationSystem::sendBytes(char *a, int len)
+int CommunicationSystem::sendBytes(char* a, int len)
 {
+    return 0;
 }
 
-int interpret(char *a)
+int interpret(char* a)
 {
+    return 0;
 }

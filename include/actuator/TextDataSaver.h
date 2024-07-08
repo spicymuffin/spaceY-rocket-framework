@@ -16,20 +16,20 @@
 #include "pico/stdlib.h"
 
 class TextDataSaver : public RocketModule,
-                      public Actuator
+    public Actuator
 {
 public:
-    TextDataSaver(const char *_name,
-                  int _updateFrequency,
-                  const char *_directoryPath,
-                  const char *_fileNamePostfix,
-                  IFileSystemContol *_IFileSystemContoller) : RocketModule(_name, _updateFrequency),
-                                                              Actuator()
+    TextDataSaver(const char* _name,
+        int _updateFrequency,
+        const char* _directoryPath,
+        const char* _fileNamePostfix,
+        IFileSystemContol* _IFileSystemContoller) : RocketModule(_name, _updateFrequency),
+        Actuator()
     {
         IFileSystemContoller = _IFileSystemContoller;
     }
 
-    void dumpLine(char *_line)
+    void dumpLine(char* _line)
     {
         /// TODO: dump line using filesystem
     }
@@ -41,9 +41,9 @@ public:
 
 private:
     /// TODO: fix filesystem
-    IFileSystemContol *IFileSystemContoller;
-    char *dumpFilePath;
-    char *directoryPath;
+    IFileSystemContol* IFileSystemContoller;
+    char* dumpFilePath;
+    char* directoryPath;
 };
 
 #endif

@@ -31,7 +31,7 @@ public:
     struct moduleTickLog
     {
         int tickNumber;
-        char *moduleName;
+        char* moduleName;
         actionEntry buffer[MAX_ACTION_ENTRIES_PER_TICK];
     };
 
@@ -42,16 +42,16 @@ public:
      * @param _directoryPath path to flight logs directory
      * @param _fileNamePostfix filename postfix
      */
-    FlightLogger(char *_name,
-                 char *_directoryPath,
-                 char *_fileNamePostfix);
+    FlightLogger(char* _name,
+        char* _directoryPath,
+        char* _fileNamePostfix);
 
     /**
      * @brief Get the name of the flight logger object
      *
      * @return char* the name of the flight logger object
      */
-    char *getName();
+    char* getName();
 
     /**
      * @brief dumps buffer contents generated during this tick to a file
@@ -69,12 +69,12 @@ public:
 private:
     /// TODO: fix filesystem
     // ofstream dumpFile;
-    char *dumpFilePath;
-    char *directoryPath;
+    char* dumpFilePath;
+    char* directoryPath;
 
     /// TODO: dump to file asap
     moduleTickLog tickBuffer[32];
-    char *name;
+    char* name;
 };
 
 #endif

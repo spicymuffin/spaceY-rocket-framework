@@ -7,20 +7,20 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 
-Clock::Clock(){};
+Clock::Clock() {};
 
 const uint32_t Clock::getNewTimestamp()
 {
     this->update();
-    return currentTimestamp;
+    return current_ts;
 };
 
 const uint32_t Clock::getTimestamp() const
 {
-    return currentTimestamp;
+    return current_ts;
 }
 
 void Clock::update()
 {
-    currentTimestamp = time_us_32();
+    current_ts = time_us_32();
 }

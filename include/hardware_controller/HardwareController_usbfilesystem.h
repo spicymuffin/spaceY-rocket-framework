@@ -18,7 +18,7 @@ class HardwareController_usbfilesystem : public HardwareController,
     public IFileSystemContol
 {
 public:
-    HardwareController_usbfilesystem(const char* _hardwaremodelName);
+    HardwareController_usbfilesystem(const char* _hardwareName);
     void open() override;
     const int update() override;
 

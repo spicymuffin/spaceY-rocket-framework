@@ -140,7 +140,7 @@ public:
         return r;
     }
 
-    void rotate(Quaternion *q)
+    void rotate(Quaternion* q)
     {
         // http://www.cprogramming.com/tutorial/3d/quaternions.html
         // http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/transforms/index.htm
@@ -166,7 +166,7 @@ public:
         z = p.z;
     }
 
-    VectorInt16 getRotated(Quaternion *q)
+    VectorInt16 getRotated(Quaternion* q)
     {
         VectorInt16 r(x, y, z);
         r.rotate(q);
@@ -215,7 +215,7 @@ public:
         return r;
     }
 
-    void rotate(Quaternion *q)
+    void rotate(Quaternion* q)
     {
         Quaternion p(0, x, y, z);
 
@@ -231,7 +231,7 @@ public:
         z = p.z;
     }
 
-    VectorFloat getRotated(Quaternion *q)
+    VectorFloat getRotated(Quaternion* q)
     {
         VectorFloat r(x, y, z);
         r.rotate(q);
