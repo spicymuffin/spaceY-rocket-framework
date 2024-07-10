@@ -47,7 +47,7 @@ public:
      *
      * @return int update result
      */
-    virtual int update();
+    virtual const int update();
 
 protected:
     int tick;

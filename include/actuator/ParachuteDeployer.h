@@ -26,28 +26,14 @@ class ParachuteDeployer : public RocketModule,
     public Actuator
 {
 public:
-    /// TODO: add open sensitivity parameter(s)
     ParachuteDeployer(
         const char* _name,
         int _update_frequency,
         Accelerometer* _accelerometer,
         Gyroscope* _gyroscope,
-        IServoControl* _IServoController) :
-        RocketModule(_name, _update_frequency),
-        Actuator()
-    {
-        IServoController_ref = _IServoController;
-    }
-
-    void deployParachute()
-    {
-        IServoController_ref->set_angle(PARACHUTE_OPENED_SERVO_ANGLE);
-    }
-
-    int update()
-    {
-        /// TODO: figure out wheteher we have to open the parachute or nah....
-    }
+        IServoControl* _IServoController);
+    void deploy_parachute();
+    const int update() override;
 
 private:
     Accelerometer* accelerometer_ref;

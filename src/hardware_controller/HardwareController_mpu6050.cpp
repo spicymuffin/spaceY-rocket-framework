@@ -106,13 +106,13 @@ const int HardwareController_mpu6050::update()
     return 0;
 }
 
-const AccelerometerDataPack HardwareController_mpu6050::get_accelerometer_reading()
+const VectorInt16 HardwareController_mpu6050::get_accelerometer_reading()
 {
     printf("-----------------> accelerometer reading\n");
     return {};
 }
 
-const GyroscopeDataPack HardwareController_mpu6050::get_gyroscope_reading()
+const VectorInt16 HardwareController_mpu6050::get_gyroscope_reading()
 {
     printf("-----------------> gyroscope reading\n");
     return {};

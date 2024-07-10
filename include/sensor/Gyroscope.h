@@ -11,8 +11,9 @@
 #include "actuator/TextDataSaver.h"
 #include "system/Clock.h"
 
+#include "ext_lib/math3d/math3d.h"
+
 #include "control_interface/IGyroscopeControl.h"
-#include "struct/GyroscopeDataPack.h"
 
 // pico sdk
 #include <string.h>
@@ -27,26 +28,12 @@ public:
         int _updateFrequency,
         TextDataSaver* _textDataSaver,
         Clock* _clock,
-        IGyroscopeControl* _IGyroscopeController) : RocketModule(_name, _updateFrequency),
-        Sensor()
-    {
-        textDataSaver_ref = _textDataSaver;
-        clock_ref = _clock;
-        IGyroscopeController_ref = _IGyroscopeController;
-    }
-
-    const GyroscopeDataPack getReading()
-    {
-        return IGyroscopeController_ref->get_gyroscope_reading();
-    }
-
-    int update()
-    {
-        return -1;
-    }
+        IGyroscopeControl* _IGyroscopeController);
+    const VectorInt16 getReading();
+    const int update() override;
 
 private:
-    GyroscopeDataPack latest_value;
+    VectorInt16 latest_value;
 
     TextDataSaver* textDataSaver_ref;
     Clock* clock_ref;

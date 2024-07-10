@@ -17,18 +17,10 @@
 class FuelCellIgniter : public RocketModule, public Actuator
 {
 public:
-    FuelCellIgniter(const char* _name, int _updateFrequency) :
-        RocketModule(_name, _updateFrequency),
-        Actuator()
-    {
-    }
-    void ignite()
-    {
-    }
-    void get_ignition_state()
-    {
-    }
-    int update() { return 0; }
+    FuelCellIgniter(const char* _name, int _updateFrequency);
+    void ignite();
+    void get_ignition_state();
+    const int update() override;
 
 private:
 };

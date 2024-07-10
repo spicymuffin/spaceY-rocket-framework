@@ -45,7 +45,7 @@ THE SOFTWARE.
 #define BUFFER_LENGTH 32
 #endif
 
-static int addr = 0x68;
+// static int addr = 0x68; // why do we need this
 
 int16_t map(int16_t x, int16_t in_min, int16_t in_max, int16_t out_min, int16_t out_max)
 {
@@ -3396,7 +3396,6 @@ bool MPU6050::writeMemoryBlock(const uint8_t* data, uint16_t dataSize, uint8_t b
     uint8_t* verifyBuffer = 0;
     uint8_t* progBuffer = 0;
     uint16_t i;
-    uint8_t j;
     if (verify)
         verifyBuffer = (uint8_t*)malloc(MPU6050_DMP_MEMORY_CHUNK_SIZE);
     if (useProgMem)
@@ -3488,7 +3487,7 @@ bool MPU6050::writeDMPConfigurationSet(const uint8_t* data, uint16_t dataSize, b
 {
     uint8_t* progBuffer = 0;
     uint8_t success, special;
-    uint16_t i, j;
+    uint16_t i;
     if (useProgMem)
     {
         progBuffer = (uint8_t*)malloc(8); // assume 8-byte blocks, realloc later if necessary

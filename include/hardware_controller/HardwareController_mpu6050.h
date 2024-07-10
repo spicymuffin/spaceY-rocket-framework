@@ -28,9 +28,9 @@ class HardwareController_mpu6050 : public HardwareController,
     public IGyroscopeControl
 {
 public:
-    HardwareController_mpu6050(const char* _hardwareName, i2c_inst_t* _i2c_inst, uint _baudrate);
-    const AccelerometerDataPack get_accelerometer_reading() override;
-    const GyroscopeDataPack get_gyroscope_reading() override;
+    HardwareController_mpu6050(const char* _hardware_name, i2c_inst_t* _i2c_inst, uint _baudrate);
+    const VectorInt16 get_accelerometer_reading() override;
+    const VectorInt16 get_gyroscope_reading() override;
     const int update() override;
 
 private:

@@ -25,6 +25,7 @@
 #include "system/Clock.h"
 #include "system/CommunicationSystem.h"
 #include "system/FlightLogger.h"
+#include "system/RocketState.h"
 
 // hardware controllers
 #include "hardware_controller/HardwareController_fuelcelligniter.h"
@@ -34,9 +35,6 @@
 #include "hardware_controller/HardwareController_usbfilesystem.h"
 
 // structs
-#include "struct/AccelerometerDataPack.h"
-#include "struct/AngularAccelerometerDataPack.h"
-#include "struct/GyroscopeDataPack.h"
 
 // actuators
 #include "actuator/OnboardLed.h"
@@ -218,8 +216,6 @@ int main(int argc, char* argv[])
         // rocket's "mission code". all major operations that
         // are not related to data processing should be made transparent
         // by being put here.
-
-
 
 
 

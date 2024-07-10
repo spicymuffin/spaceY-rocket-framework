@@ -7,17 +7,18 @@
 #include "base_class/RocketModule.h"
 #include "base_class/Sensor.h"
 
-// dependencies
-#include "actuator/TextDataSaver.h"
-#include "system/Clock.h"
-
-#include "control_interface/IAccelerometerControl.h"
-#include "struct/AccelerometerDataPack.h"
-
 // pico sdk
 #include <string.h>
 #include <stdio.h>
 #include "pico/stdlib.h"
+
+// dependencies
+#include "actuator/TextDataSaver.h"
+#include "system/Clock.h"
+
+#include "ext_lib/math3d/math3d.h"
+
+#include "control_interface/IAccelerometerControl.h"
 
 class Accelerometer : public RocketModule,
     public Sensor
@@ -27,26 +28,12 @@ public:
         int _update_frequency,
         TextDataSaver* _textDataSaver,
         Clock* _clock,
-        IAccelerometerControl* _IAccelerometerController) : RocketModule(_name, _update_frequency),
-        Sensor()
-    {
-        textDataSaver_ref = _textDataSaver;
-        clock_ref = _clock;
-        IAccelerometerControl_ref = _IAccelerometerController;
-    }
-
-    const AccelerometerDataPack getReading()
-    {
-        return IAccelerometerControl_ref->get_accelerometer_reading();
-    }
-
-    int update()
-    {
-        return -1;
-    }
+        IAccelerometerControl* _IAccelerometerController);
+    const VectorInt16 getReading();
+    const int update() override;
 
 private:
-    AccelerometerDataPack latest_value;
+    VectorInt16 latest_value;
 
     TextDataSaver* textDataSaver_ref;
     Clock* clock_ref;

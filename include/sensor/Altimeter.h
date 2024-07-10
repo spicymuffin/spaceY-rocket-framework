@@ -26,17 +26,8 @@ public:
         int _updateFrequency,
         TextDataSaver* _textDataSaver,
         Clock* _clock,
-        IAltimeterControl* _IAltimeterController) : RocketModule(_name, _updateFrequency), Sensor()
-    {
-        textDataSaver_ref = _textDataSaver;
-        clock_ref = _clock;
-        IAltimeterController_ref = _IAltimeterController;
-    }
-
-    int update()
-    {
-        return 0;
-    }
+        IAltimeterControl* _IAltimeterController);
+    const int update() override;
 
 private:
     float latest_value;

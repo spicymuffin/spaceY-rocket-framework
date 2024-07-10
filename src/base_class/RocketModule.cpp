@@ -16,9 +16,9 @@ RocketModule::RocketModule(const char* _name, int _update_frequency)
     update_frequency = _update_frequency;
 };
 
-int RocketModule::update()
+const int RocketModule::update()
 {
-    printf("default update\n");
+    printf("undefined rm update\n");
 
     return 0;
 }
