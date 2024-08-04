@@ -34,11 +34,10 @@
 #include "hardware_controller/HardwareController_servotype0.h"
 #include "hardware_controller/HardwareController_usbfilesystem.h"
 
-// structs
-
 // actuators
 #include "actuator/OnboardLed.h"
 #include "actuator/TextDataSaver.h"
+#include "actuator/KinematicDataProcessor.h"
 
 // sensors
 #include "sensor/Accelerometer.h"
@@ -48,6 +47,9 @@
 #include "pico/stdlib.h"
 #include <stdio.h>
 #include <string.h>
+
+// util
+#include "util/CircularBuffer.h"
 
 // constants
 #define TICK_LENGTH_MICROSECONDS MICROSECONDS_PER_SECOND / REFRESH_RATE
@@ -71,19 +73,17 @@ HardwareController* hctable[HC_TABLE_LEN];
 
 int main(int argc, char* argv[])
 {
-    #if DBGMSG_INITIALIZATION
+    stdio_init_all();
 
-    // blink the pico's led until usb connection is established
     while (!stdio_usb_connected())
     {
         printf("waiting for usb connection...");
-        sleep_ms(500);
+        sleep_ms(250);
     }
 
+    #if DBGMSG_INITIALIZATION
     printf("intitializing...\n");
     #endif
-
-    stdio_init_all();
 
     for (int i = 0; i < RM_TABLE_LEN; i++)
     {
@@ -113,11 +113,33 @@ int main(int argc, char* argv[])
 
     #pragma endregion
 
+    #pragma region initialize rocket modules part one
+
+    KinematicDataProcessor kdp = KinematicDataProcessor("main_kdp", 1, &clock);
+    rmtable[0] = &kdp;
+
+    #pragma endregion
+
     #pragma region initialize hardware
 
-    HardwareController_usbfilesystem HC_usbfilesystem = HardwareController_usbfilesystem("usbfilesystem");
-    HardwareController_picoonboardled HC_picoonboardled = HardwareController_picoonboardled("picoonboardled");
-    HardwareController_mpu6050 HC_mpu6050 = HardwareController_mpu6050("mpu6050", i2c_default, 400 * 1000);
+    HardwareController_usbfilesystem HC_usbfilesystem = HardwareController_usbfilesystem("usbfilesystem", -1);
+    HardwareController_picoonboardled HC_picoonboardled = HardwareController_picoonboardled("picoonboardled", -1);
+
+    CircularBuffer<VectorInt16>* mpu6050_accelerometer_subscribers[] = { kdp.get_accelerometer_buffer_ref() };
+    CircularBuffer<VectorInt16>* mpu6050_gyroscope_subscribers[] = { kdp.get_gyroscope_buffer_ref() };
+    CircularBuffer<Quaternion>* mpu6050_orientation_subscribers[] = { kdp.get_orientation_buffer_ref() };
+
+    HardwareController_mpu6050 HC_mpu6050 = HardwareController_mpu6050(
+        "mpu6050",
+        1,
+        i2c_default,
+        400 * 1000,
+        mpu6050_accelerometer_subscribers,
+        mpu6050_gyroscope_subscribers,
+        mpu6050_orientation_subscribers,
+        1,
+        1,
+        1);
 
     hctable[0] = &HC_usbfilesystem;
     hctable[1] = &HC_picoonboardled;
@@ -128,30 +150,30 @@ int main(int argc, char* argv[])
     #pragma region initialize modules
 
     OnboardLed led = OnboardLed("onboard_led",
-        2,
+        4,
         &HC_picoonboardled);
-    rmtable[0] = &led;
+    rmtable[1] = &led;
 
     TextDataSaver kinem_data_tds = TextDataSaver("kinem_data_tds",
         -1,
         "",
         "",
         &HC_usbfilesystem);
-    rmtable[1] = &kinem_data_tds;
+    rmtable[2] = &kinem_data_tds;
 
     Accelerometer accelerometer = Accelerometer("main_accm",
         -1,
         nullptr,
         &clock,
         &HC_mpu6050);
-    rmtable[2] = &accelerometer;
+    rmtable[3] = &accelerometer;
 
     #pragma endregion
 
     #pragma region intialize communication systems
 
     // vector<RocketModule *> mainCommuniationSystem_Modules = {};
-    //  init main Communication System
+    // init main Communication System
     // CommunicationSystem mainCommunicationSystem = CommunicationSystem("main communication system", 10, mainCommuniationSystem_Modules, cur_dir + COMMUNICATION_PROTOCOL_PATH);
 
     #pragma endregion
@@ -177,13 +199,13 @@ int main(int argc, char* argv[])
         // debug stuff
         #if DBGMSG_TICK_SYSTEM
         printf("tick no. %u\n", tick);
-        #endif
 
         uint32_t tick_start_ts;
         uint32_t tick_end_ts;
 
         // profiling stuff
         tick_start_ts = clock.get_new_ts();
+        #endif
 
         /// TODO: update CommunicationSystem
 
@@ -213,16 +235,16 @@ int main(int argc, char* argv[])
             }
         }
 
-        // rocket's "mission code". all major operations that
-        // are not related to data processing should be made transparent
+        // rocket's "mission code". all major operations that are
+        // not related to data processing should be made transparent
         // by being put here.
 
 
 
+        #if DBGMSG_TICK_SYSTEM
         // profiling stuff
         tick_end_ts = clock.get_new_ts();
 
-        #if DBGMSG_TICK_SYSTEM
         printf("execution completed in %zu microseconds (%f%% of time used)\n", tick_end_ts - tick_start_ts, ((float)(tick_end_ts - tick_start_ts) / (float)TICK_LENGTH_MICROSECONDS) * 100);
         printf("waiting %zu microseconds to end of tick...\n", next_tick_ts - tick_end_ts);
         #endif

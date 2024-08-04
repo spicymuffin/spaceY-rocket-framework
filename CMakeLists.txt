@@ -8,6 +8,7 @@ include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 
 set(MAIN_EXECUTABLE_NAME RFW-main)
 set(TEST_EXECUTABLE_NAME RFW-test)
+set(CALIBRATOR_EXECUTABLE_NAME RFW-calibrator)
 set(LIB_NAME RFW-lib)
 
 # initialize project
@@ -38,6 +39,11 @@ if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
     add_compile_options(-Wno-maybe-uninitialized)
 endif()
 
+# enable optimizations for C++ files
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
+# enable optimizations for C files
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2")
+
 file(GLOB_RECURSE SRC_FILES "src/*.cpp")
 
 # add main.cpp
@@ -46,6 +52,9 @@ add_executable(${MAIN_EXECUTABLE_NAME} main.cpp)
 # add test.cpp
 add_executable(${TEST_EXECUTABLE_NAME} test.cpp)
 
+# add calibrator.cpp
+add_executable(${CALIBRATOR_EXECUTABLE_NAME} calibrator.cpp)
+
 # add all .cpp files recursively in src
 add_library(${LIB_NAME} STATIC ${SRC_FILES})
 
@@ -53,19 +62,26 @@ add_library(${LIB_NAME} STATIC ${SRC_FILES})
 target_include_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-# pull in includes test
+# pull in includes for test
 target_include_directories(${TEST_EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(${TEST_EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+# pull in includes for calibrator
+target_include_directories(${CALIBRATOR_EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(${CALIBRATOR_EXECUTABLE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 # pull in includes for lib
 target_include_directories(${LIB_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(${LIB_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 # link libs for main
-target_link_libraries(${MAIN_EXECUTABLE_NAME} pico_stdlib hardware_gpio hardware_i2c ${LIB_NAME} ${LIB_NAME})
+target_link_libraries(${MAIN_EXECUTABLE_NAME} pico_stdlib hardware_gpio hardware_i2c ${LIB_NAME})
 
 # link libs for test
-target_link_libraries(${TEST_EXECUTABLE_NAME} pico_stdlib hardware_gpio hardware_i2c ${LIB_NAME} ${LIB_NAME})
+target_link_libraries(${TEST_EXECUTABLE_NAME} pico_stdlib hardware_gpio hardware_i2c ${LIB_NAME})
+
+# link libs for test
+target_link_libraries(${CALIBRATOR_EXECUTABLE_NAME} pico_stdlib hardware_gpio hardware_i2c ${LIB_NAME})
 
 # link libs for lib
 target_link_libraries(${LIB_NAME} pico_stdlib hardware_gpio hardware_i2c hardware_dma)
@@ -75,7 +91,10 @@ pico_enable_stdio_usb(${MAIN_EXECUTABLE_NAME} 1)
 pico_enable_stdio_uart(${MAIN_EXECUTABLE_NAME} 0)
 pico_enable_stdio_usb(${TEST_EXECUTABLE_NAME} 1)
 pico_enable_stdio_uart(${TEST_EXECUTABLE_NAME} 0)
+pico_enable_stdio_usb(${CALIBRATOR_EXECUTABLE_NAME} 1)
+pico_enable_stdio_uart(${CALIBRATOR_EXECUTABLE_NAME} 0)
 
 # give uf2 files
 pico_add_extra_outputs(${MAIN_EXECUTABLE_NAME})
 pico_add_extra_outputs(${TEST_EXECUTABLE_NAME})
+pico_add_extra_outputs(${CALIBRATOR_EXECUTABLE_NAME})

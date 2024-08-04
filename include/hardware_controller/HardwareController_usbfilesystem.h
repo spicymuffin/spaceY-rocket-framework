@@ -14,11 +14,10 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 
-class HardwareController_usbfilesystem : public HardwareController,
-    public IFileSystemContol
+class HardwareController_usbfilesystem : public HardwareController, public IFileSystemContol
 {
 public:
-    HardwareController_usbfilesystem(const char* _hardwareName);
+    HardwareController_usbfilesystem(const char* _hardwareName, int _update_frequency);
     void open() override;
     const int update() override;
 

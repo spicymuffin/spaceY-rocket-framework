@@ -3,7 +3,7 @@
 #define HC_TABLE_LEN                        16      // max hardware controllers
 #define ENDLESS                             false   // should the main loop run indefinitely?
 #define TEST_DURATION                       30
-#define REFRESH_RATE                        64      // main loop target refresh rate (Hz)
+#define REFRESH_RATE                        128      // main loop target refresh rate (Hz)
 
 // debug
 #define DEBUG                               true    // debugging mode on or off
@@ -23,5 +23,5 @@
 #define ACTION_ENTRY_MAX_LEN                64
 #define MAX_ACTION_ENTRIES_PER_TICK         16
 
-// kinematicdataprocessor
-#define KDP_BUFFER_LENGTH                   16
+// generic data receiver
+#define DR_BUFFER_LENGTH                    16

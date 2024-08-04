@@ -15,8 +15,13 @@
 
 // dependcies
 
-HardwareController_usbfilesystem::HardwareController_usbfilesystem(const char* _hardware_name)
-    : HardwareController(_hardware_name)
+HardwareController_usbfilesystem::HardwareController_usbfilesystem(
+    const char* _hardware_name,
+    int _update_frequency)
+
+    :
+
+    HardwareController(_hardware_name, _update_frequency)
 {
 
 }

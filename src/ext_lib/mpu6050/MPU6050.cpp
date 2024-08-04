@@ -3696,7 +3696,7 @@ void MPU6050::PID(uint8_t ReadAddress, float kP, float kI, uint8_t Loops)
                     Data = round((PTerm + ITerm[i]) / 4); // Compute PID Output
                 I2Cdev::writeWords(devAddr, SaveAddress + (i * shift), 1, (uint16_t*)&Data);
             }
-            if ((c == 99) && eSum > 1000)
+            if ((c == 99) && eSum > 10)
             { // Error is still to great to continue
                 c = 0;
                 printf("*");
@@ -3719,6 +3719,8 @@ void MPU6050::PID(uint8_t ReadAddress, float kP, float kI, uint8_t Loops)
             }
             else
                 Data = round((ITerm[i]) / 4);
+
+            printf("DATA%d: %d ", i, Data);
             I2Cdev::writeWords(devAddr, SaveAddress + (i * shift), 1, (uint16_t*)&Data);
         }
     }

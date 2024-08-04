@@ -18,7 +18,9 @@
 OnboardLed::OnboardLed(
     const char* _name,
     int _update_frequency,
-    ILedControl* _ILedController) :
+    ILedControl* _ILedController)
+
+    :
 
     RocketModule(_name, _update_frequency),
     Actuator()

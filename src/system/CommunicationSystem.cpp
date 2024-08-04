@@ -22,7 +22,7 @@ CommunicationSystem::CommunicationSystem(const char* _name,
 
 void CommunicationSystem::update()
 {
-    /// TODO: communicate with physical thing and read.
+    /// TODO: read the uart buffer, decode, execute
 }
 
 int CommunicationSystem::send_bytes(char* a, int len)

@@ -24,37 +24,64 @@
 // ext_lib
 #include "ext_lib/math3d/math3d.h"
 
+// util
+#include "util/CircularBuffer.h"
+
 class KinematicDataProcessor : public RocketModule, public Actuator
 {
 public:
     KinematicDataProcessor(const char* _name, int _update_frequency, Clock* _clock);
-    void write_ornt(const Quaternion& q);
-    void write_accl(const VectorInt16& v);
-    void write_gyro(const VectorInt16& v);
 
-    void get_gravity(VectorFloat* target, const Quaternion& q);
+    void get_gravity(VectorFloat* v, Quaternion* q);
     void get_linear_accel(VectorInt16* v, VectorInt16* v_raw, VectorFloat* gravity);
-    void get_linear_world_accel(VectorInt16* v, VectorInt16* v_linear, Quaternion* q);
+    void get_world_linear_accel(VectorInt16* v, VectorInt16* v_linear, Quaternion* q);
+
+    CircularBuffer<Quaternion>* get_orientation_buffer_ref();
+    CircularBuffer<VectorFloat>* get_velocity_buffer_ref();
+    CircularBuffer<VectorFloat>* get_position_buffer_ref();
+
+    CircularBuffer<VectorInt16>* get_accelerometer_buffer_ref();
+    CircularBuffer<VectorInt16>* get_gyroscope_buffer_ref();
 
     const int update() override;
 
 private:
-    // calculated
-    Quaternion orientation_buffer[KDP_BUFFER_LENGTH];
-    VectorFloat velocity_buffer[KDP_BUFFER_LENGTH];
-    VectorFloat position_buffer[KDP_BUFFER_LENGTH];
+    // calculated (*)
+    CircularBuffer<Quaternion> orientation_buffer;
+    CircularBuffer<VectorFloat> velocity_buffer;
+    CircularBuffer<VectorFloat> position_buffer;
 
     // sensed
-    VectorInt16 accelerometer_buffer[KDP_BUFFER_LENGTH];
-    VectorInt16 gyroscope_buffer[KDP_BUFFER_LENGTH];
+    CircularBuffer<VectorInt16> accelerometer_buffer;
+    CircularBuffer<VectorInt16> gyroscope_buffer;
 
-    // ptrs
-    uint8_t orientation_buffer_ptr = 0;
-    uint8_t velocity_buffer_ptr = 0;
-    uint8_t position_buffer_ptr = 0;
+    // temporary vars
+    Quaternion ornt;
+    VectorInt16 accl;
+    VectorInt16 gyro;
 
-    uint8_t accelerometer_buffer_ptr = 0;
-    uint8_t gyroscope_buffer_ptr = 0;
+    VectorFloat gravity;
+
+    VectorInt16 linear_accel;
+
+    VectorInt16 world_linear_accel;
+    VectorInt16 prev_world_linear_accel;
+
+    VectorInt16 world_velocity;
+    VectorInt16 prev_world_velocity;
+
+    VectorInt16 world_position;
+
+    uint32_t prev_ts;
+    uint32_t curr_ts;
+
+    // // ptrs
+    // uint8_t orientation_buffer_ptr = 0;
+    // uint8_t velocity_buffer_ptr = 0;
+    // uint8_t position_buffer_ptr = 0;
+
+    // uint8_t accelerometer_buffer_ptr = 0;
+    // uint8_t gyroscope_buffer_ptr = 0;
 
     Clock* clock_ref;
 };

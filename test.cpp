@@ -8,9 +8,12 @@
 #include "ext_lib/mpu6050/MPU6050.h"
 #include "hardware/dma.h"
 
+#define SDA_PIN 20
+#define SCL_PIN 21
+
 MPU6050 mpu;
 
-#define OUTPUT_READABLE_YAWPITCHROLL
+// #define OUTPUT_READABLE_YAWPITCHROLL
 // #define OUTPUT_READABLE_REALACCEL
 // #define OUTPUT_READABLE_WORLDACCEL
 // #define OUTPUT_READABLE_CUSTOM
@@ -32,13 +35,16 @@ float euler[3];      // [psi, theta, phi]    Euler angle container
 float ypr[3];        // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
 float yaw, pitch, roll;
 
+uint32_t prev_ts;
+uint32_t ts;
+
 volatile bool mpuInterrupt = false; // indicates whether MPU interrupt pin has gone high
 void dmpDataReady()
 {
     mpuInterrupt = true;
 }
 
-void initLED()
+void init_led()
 {
     #ifndef PICO_DEFAULT_LED_PIN // PICO w with WiFi
     printf("we have board with wifi (pico w) \n");
@@ -53,9 +59,9 @@ void initLED()
     gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
     #endif // PICO_DEFAULT_LED_PIN
 
-} // initLED()
+} // init_led()
 
-void waitForUsbConnect()
+void wait_usb_connection()
 {
     #ifdef _PICO_STDIO_USB_H // We are using PICO_STDIO_USB. Have to wait for connection.
 
@@ -77,23 +83,23 @@ void waitForUsbConnect()
     }
     #endif // PICO_DEFAULT_LED_PIN
     #endif // _PICO_STDIO_USB_H
-} //  waitForUsbConnect
+} //  wait_usb_connection
 
 int main()
 {
     stdio_init_all();
     // This example will use I2C0 on the default SDA and SCL (pins 6, 7 on a Pico)
     i2c_init(i2c_default, 400 * 1000);
-    gpio_set_function(PICO_DEFAULT_I2C_SDA_PIN, GPIO_FUNC_I2C);
-    gpio_set_function(PICO_DEFAULT_I2C_SCL_PIN, GPIO_FUNC_I2C);
-    gpio_pull_up(PICO_DEFAULT_I2C_SDA_PIN);
-    gpio_pull_up(PICO_DEFAULT_I2C_SCL_PIN);
+    gpio_set_function(SDA_PIN, GPIO_FUNC_I2C);
+    gpio_set_function(SCL_PIN, GPIO_FUNC_I2C);
+    gpio_pull_up(SDA_PIN);
+    gpio_pull_up(SCL_PIN);
     // Make the I2C pins available to picotool
 
     // setup blink led
     // setup blink led
-    initLED();
-    waitForUsbConnect();
+    init_led();
+    wait_usb_connection();
 
     // ================================================================
     // ===                      INITIAL SETUP                       ===
@@ -103,12 +109,12 @@ int main()
     devStatus = mpu.dmpInitialize();
 
     /* --- if you have calibration data then set the sensor offsets here --- */
-    // mpu.setXAccelOffset();
-    // mpu.setYAccelOffset();
-    // mpu.setZAccelOffset();
-    // mpu.setXGyroOffset();
-    // mpu.setYGyroOffset();
-    // mpu.setZGyroOffset();
+    // mpu.setXAccelOffset(-1764);
+    // mpu.setYAccelOffset(-379);
+    // mpu.setZAccelOffset(1444);
+    // mpu.setXGyroOffset(17);
+    // mpu.setYGyroOffset(-24);
+    // mpu.setZGyroOffset(16);
 
     /* --- alternatively you can try this (6 loops should be enough) --- */
     mpu.CalibrateAccel(6);
@@ -120,6 +126,7 @@ int main()
         mpuIntStatus = mpu.getIntStatus();
         dmpReady = true;                         // set our DMP Ready flag so the main loop() function knows it's okay to use it
         packetSize = mpu.dmpGetFIFOPacketSize(); // get expected DMP packet size for later comparison
+        printf("PACKET SIZE = %u\n", packetSize);
     }
     else
     { // ERROR!        1 = initial memory load failed         2 = DMP configuration updates failed        (if it's going to break, usually the code will be 1)
@@ -136,41 +143,28 @@ int main()
 
     while (1)
     {
-
-        if (!dmpReady)
-            ; // if programming failed, don't try to do anything
+        if (!dmpReady);                                                    // if programming failed, don't try to do anything
         mpuInterrupt = true;
-        // printf("starting fifocount transfer\n");
-        fifoCount = mpu.getFIFOCount();
-        if (fifoCount == (uint16_t)(-1))
+        fifoCount = mpu.getFIFOCount();                                           // get current FIFO count
+        if ((mpuIntStatus & 0x10) || fifoCount == 1024)                           // check for overflow (this should never happen unless our code is too inefficient)
         {
-            printf("TIMEOUT ERR\n");
-            mpu.resetFIFO();
-        }
-        // printf("fifocount transfer complete\n");
-        if ((mpuIntStatus & 0x10) || fifoCount == 1024) // check for overflow (this should never happen unless our code is too inefficient)
-        {
-            mpu.resetFIFO(); // reset so we can continue cleanly
+            mpu.resetFIFO();                                                      // reset so we can continue cleanly
             printf("FIFO overflow!");
         }
-        else if (mpuIntStatus & 0x01) // otherwise, check for DMP data ready interrupt (this should happen frequently)
+        else if (mpuIntStatus & 0x01)                                             // otherwise, check for DMP data ready interrupt (this should happen frequently)
         {
             // printf("starting fifocount transfer (2)\n");
             while (fifoCount < packetSize)
             {
                 fifoCount = mpu.getFIFOCount(); // wait for correct available data length, should be a VERY short wait
-                // printf("fifocount iteration. %d\n", fifoCount);
-                if (fifoCount == (uint16_t)(-1))
-                {
-                    printf("TIMEOUT ERR\n");
-                    mpu.resetFIFO();
-                }
             }
             // printf("fifocount transfer complete (2)\n");
             // printf("starting data transfer\n");
             mpu.getFIFOBytes(fifoBuffer, packetSize); // read a packet from FIFO
             // printf("data transfer complete\n");
             fifoCount -= packetSize; // track FIFO count here in case there is > 1 packet available
+            mpu.dmpGetAccel(&aa, fifoBuffer);
+            printf("%d, %d, %d\n", aa.x, aa.y, aa.z);
             #ifdef OUTPUT_READABLE_YAWPITCHROLL  // display Euler angles in degrees
             mpu.dmpGetQuaternion(&q, fifoBuffer);
             mpu.dmpGetGravity(&gravity, &q);
@@ -178,7 +172,10 @@ int main()
             yaw = ypr[0] * 180 / PI;
             pitch = ypr[1] * 180 / PI;
             roll = ypr[2] * 180 / PI;
-            printf("ypr: %f,\t %f,\t %f\n", yaw, pitch, roll);
+            ts = time_us_32();
+            printf("ypr: %f,\t %f,\t %f ", yaw, pitch, roll);
+            printf("dt=%u\n", ts - prev_ts);
+            prev_ts = ts;
             #endif
             #ifdef OUTPUT_READABLE_REALACCEL
             // display real acceleration, adjusted to remove gravity
@@ -196,7 +193,7 @@ int main()
             mpu.dmpGetGravity(&gravity, &q);
             mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
             mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q);
-            printf("aworld: %d,\t %d,\t %d\n", aaWorld.x, aaWorld.y, aaWorld.z);
+            printf("aworld: %d, %d, %d\n", aaWorld.x, aaWorld.y, aaWorld.z);
             #endif
             #ifdef OUTPUT_READABLE_CUSTOM
             mpu.dmpGetQuaternion(&q, fifoBuffer);

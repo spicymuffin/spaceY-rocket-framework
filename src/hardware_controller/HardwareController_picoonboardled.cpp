@@ -14,8 +14,13 @@
 #ifndef PICO_DEFAULT_LED_PIN
 #warning blink example requires a board with a regular LED
 #else
-HardwareController_picoonboardled::HardwareController_picoonboardled(const char* _hardwareName)
-    : HardwareController(_hardwareName)
+HardwareController_picoonboardled::HardwareController_picoonboardled(
+    const char* _hardware_name,
+    int _update_frequency)
+
+    :
+
+    HardwareController(_hardware_name, _update_frequency)
 {
     LED_PIN = PICO_DEFAULT_LED_PIN;
     gpio_init(LED_PIN);

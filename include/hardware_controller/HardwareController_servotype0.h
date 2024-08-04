@@ -18,7 +18,7 @@ class HardwareController_servotype0 : public HardwareController,
     public IServoControl
 {
 public:
-    HardwareController_servotype0(char* _hardwaremodelName);
+    HardwareController_servotype0(const char* _hardwaremodelName, int _update_frequency);
     void set_angle(int _angle) override;
 
 private:
