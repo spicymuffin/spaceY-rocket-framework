@@ -229,7 +229,11 @@ target_compile_definitions(${MAIN_EXECUTABLE_NAME} PRIVATE
     PICO_PANIC_FUNCTION=tusb_panic
 )
 
-# something related to console output
+set(CMAKE_ROOT_LIST_DIR ${CMAKE_CURRENT_LIST_DIR})
+
+add_subdirectory(util)
+
+# Setup stdio interface
 pico_enable_stdio_usb(${MAIN_EXECUTABLE_NAME} 0)
 pico_enable_stdio_uart(${MAIN_EXECUTABLE_NAME} 0)
 pico_enable_stdio_usb(${TEST_EXECUTABLE_NAME} 0)
@@ -237,7 +241,21 @@ pico_enable_stdio_uart(${TEST_EXECUTABLE_NAME} 0)
 pico_enable_stdio_usb(${CALIBRATOR_EXECUTABLE_NAME} 0)
 pico_enable_stdio_uart(${CALIBRATOR_EXECUTABLE_NAME} 0)
 
-# give uf2 files
+# Generate uf2 files
 pico_add_extra_outputs(${MAIN_EXECUTABLE_NAME})
 pico_add_extra_outputs(${TEST_EXECUTABLE_NAME})
 pico_add_extra_outputs(${CALIBRATOR_EXECUTABLE_NAME})
+
+# Copy uf2 files to dist
+add_custom_command(TARGET ${MAIN_EXECUTABLE_NAME} POST_BUILD COMMAND 
+    ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_LIST_DIR}/build
+)
+add_custom_command(TARGET ${MAIN_EXECUTABLE_NAME} POST_BUILD COMMAND 
+    ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/build/${MAIN_EXECUTABLE_NAME}.uf2 ${CMAKE_CURRENT_LIST_DIR}/dist/${MAIN_EXECUTABLE_NAME}.uf2
+)
+add_custom_command(TARGET ${TEST_EXECUTABLE_NAME} POST_BUILD COMMAND 
+    ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/build/${TEST_EXECUTABLE_NAME}.uf2 ${CMAKE_CURRENT_LIST_DIR}/dist/${TEST_EXECUTABLE_NAME}.uf2
+)
+add_custom_command(TARGET ${CALIBRATOR_EXECUTABLE_NAME} POST_BUILD COMMAND 
+    ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/build/${CALIBRATOR_EXECUTABLE_NAME}.uf2 ${CMAKE_CURRENT_LIST_DIR}/dist/${CALIBRATOR_EXECUTABLE_NAME}.uf2
+)
