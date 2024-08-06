@@ -27,35 +27,33 @@
 
 void HardwareController_mpu6050::init()
 {
-
 }
 
 void HardwareController_mpu6050::init_dmp()
 {
-
 }
 
 HardwareController_mpu6050::HardwareController_mpu6050(
-    const char* _hardware_name,
+    const char *_hardware_name,
     int _update_frequency,
-    i2c_inst_t* _i2c_inst,
+    i2c_inst_t *_i2c_inst,
     uint _baudrate,
-    CircularBuffer<VectorInt16>* _accelerometer_data_receivers[],
-    CircularBuffer<VectorInt16>* _gyroscope_data_receivers[],
-    CircularBuffer<Quaternion>* _orientation_data_receivers[],
+    CircularBuffer<VectorInt16> *_accelerometer_data_receivers[],
+    CircularBuffer<VectorInt16> *_gyroscope_data_receivers[],
+    CircularBuffer<Quaternion> *_orientation_data_receivers[],
     uint8_t _norientation_data_receivers,
     uint8_t _naccelerometer_data_receivers,
     uint8_t _ngyroscope_data_receivers)
 
     :
 
-    HardwareController(_hardware_name, _update_frequency)
+      HardwareController(_hardware_name, _update_frequency)
 {
     int device_status = -1;
 
-    #if DBGMSG_HC_MPU6050
+#if DBGMSG_HC_MPU6050
     printf("[STATUS]:[HC_MPU6050] starting intialization sequence\n");
-    #endif
+#endif
 
     /// TODO: sets to default without regard to input. fix it.
 
@@ -73,9 +71,9 @@ HardwareController_mpu6050::HardwareController_mpu6050(
     naccelerometer_data_receivers = _naccelerometer_data_receivers;
     ngyroscope_data_receivers = _ngyroscope_data_receivers;
 
-    #if DBGMSG_HC_MPU6050
+#if DBGMSG_HC_MPU6050
     printf("[  OK  ]:[HC_MPU6050] reference copying completed\n");
-    #endif
+#endif
 
     // initialize i2c and hardware
     i2c_init(i2c_inst, baudrate);
@@ -84,46 +82,46 @@ HardwareController_mpu6050::HardwareController_mpu6050(
     gpio_pull_up(SDA_PIN);
     gpio_pull_up(SCL_PIN);
 
-    #if DBGMSG_HC_MPU6050
+#if DBGMSG_HC_MPU6050
     printf("[  OK  ]:[HC_MPU6050] gpio and i2c init completed\n");
-    #endif
+#endif
 
     // initialize the mpu (basic switch on)
     mpu.initialize();
 
-    #if DBGMSG_HC_MPU6050
+#if DBGMSG_HC_MPU6050
     printf("[  OK  ]:[HC_MPU6050] mpu basic init sequence completed\n");
-    #endif
+#endif
 
     // initialize the mpu's dmp processor, load its firmware
     device_status = mpu.dmpInitialize();
 
-    #if DBGMSG_HC_MPU6050
+#if DBGMSG_HC_MPU6050
     printf("[  OK  ]:[HC_MPU6050] mpu dmp init sequence completed\n");
-    #endif
+#endif
 
     // calibrate the sensors
     mpu.CalibrateAccel(10);
     mpu.CalibrateGyro(10);
 
-    #if DBGMSG_HC_MPU6050
+#if DBGMSG_HC_MPU6050
     printf("[  OK  ]:[HC_MPU6050] hardware calibration sequence completed\n");
-    #endif
+#endif
 
     if (device_status == 0)
     {
         // turn on the dmp processor
         mpu.setDMPEnabled(true);
         fifo_packet_size = mpu.dmpGetFIFOPacketSize();
-        #if DBGMSG_HC_MPU6050
+#if DBGMSG_HC_MPU6050
         printf("[  OK  ]:[HC_MPU6050] fifo packet size attained. size=%u\n", fifo_packet_size);
-        #endif
+#endif
     }
     else
     {
-        #if DBGMSG_HC_MPU6050
+#if DBGMSG_HC_MPU6050
         printf("[ FAIL ]:[HC_MPU6050] device status=%d, fifo packet size unattainable\n", device_status);
-        #endif
+#endif
     }
 }
 
@@ -137,9 +135,9 @@ const int HardwareController_mpu6050::update()
     fifo_count = mpu.getFIFOCount();
     if ((interrupt_status & 0x10) || fifo_count == 1024)
     {
-        #if DBGMSG_HC_MPU6050
+#if DBGMSG_HC_MPU6050
         printf("[ WARN ]:[HC_MPU6050] fifo overflow, fifo_count=%u\n", fifo_count);
-        #endif
+#endif
         mpu.resetFIFO();
     }
     else // if (interrupt_status & 0x01) // bro help i need interrupts
