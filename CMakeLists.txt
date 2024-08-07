@@ -82,6 +82,10 @@ add_executable(${PROJECT}_main ${SOURCES})
 
 set(HARDWARE_LIBRARIES
     pico_stdlib
+    tinyusb_device
+    tinyusb_host
+    tinyusb_board
+    tinyusb_pico_pio_usb
 )
 
 target_link_libraries(${PROJECT}_main PRIVATE
@@ -91,6 +95,7 @@ target_link_libraries(${PROJECT}_main PRIVATE
 target_link_options(${PROJECT}_main PRIVATE -Xlinker --print-memory-usage)
 
 target_include_directories(${PROJECT}_main PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/src/tinyusb
     ${CMAKE_CURRENT_LIST_DIR}/include
     ${CMAKE_CURRENT_LIST_DIR}/lib/rfw/include
 )
