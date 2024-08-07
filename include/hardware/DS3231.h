@@ -1,5 +1,5 @@
-#ifndef __RFW_PROVIDER_DS3231_H
-#define __RFW_PROVIDER_DS3231_H
+#ifndef __RFW_HARDWARE_DS3231_H
+#define __RFW_HARDWARE_DS3231_H
 
 #include <rfw/clock/AbsoluteClock.h>
 #include <rfw/environment/Temperature.h>
@@ -14,4 +14,4 @@ public:
 	void set_time(uint64_t time) override;
 };
 
-#endif
+#endif // __RFW_HARDWARE_DS3231_H
