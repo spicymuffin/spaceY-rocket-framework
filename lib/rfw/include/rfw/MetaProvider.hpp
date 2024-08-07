@@ -1,4 +1,7 @@
+#include <map>
+#include <string>
 #include <memory>
+#include <stdexcept>
 #include <functional>
 #include <type_traits>
 
@@ -17,9 +20,31 @@ namespace RFW
 		}
 
 		template <class T, typename = std::enable_if_t<std::is_base_of_v<Base, T>>>
-		void registerProvider(std::shared_ptr<T> provider)
+		void registerProvider(const std::string &label, std::shared_ptr<T> provider)
 		{
-			providers.push_back(std::static_pointer_cast<Base>(provider));
+			if (providers.find(label) != providers.end())
+			{
+				throw std::runtime_error("Provider with label " + label + " already exists");
+			}
+			providers[label] = provider;
+		}
+
+		template <typename I>
+		std::shared_ptr<I> getProvider(const std::string &label)
+		{
+			auto provider = providers.find(label);
+			if (provider == providers.end())
+			{
+				return nullptr;
+			}
+
+			auto castedProvider = std::dynamic_pointer_cast<I>(provider->second);
+			if (!castedProvider)
+			{
+				return nullptr;
+			}
+
+			return castedProvider;
 		}
 
 		template <typename I>
@@ -52,7 +77,7 @@ namespace RFW
 		{
 			for (auto &provider : providers)
 			{
-				auto castedProvider = std::dynamic_pointer_cast<Update>(provider);
+				auto castedProvider = std::dynamic_pointer_cast<Update>(provider.second);
 				if (!castedProvider)
 				{
 					continue;
@@ -64,6 +89,6 @@ namespace RFW
 
 	private:
 		MetaProvider() = default;
-		std::vector<std::shared_ptr<Base>> providers;
+		std::map<std::string, std::shared_ptr<Base>> providers;
 	};
 }

@@ -42,6 +42,7 @@ execute_process(COMMAND ${Python3_EXECUTABLE} ${PICO_TINYUSB_PATH}/tools/get_dep
 #
 set(FAMILY rp2040)
 set(PROJECT RFW)
+set(PICO_CXX_ENABLE_EXCEPTIONS 1)
 set(PICO_CXX_ENABLE_RTTI 1)
 
 #
