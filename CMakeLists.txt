@@ -76,11 +76,13 @@ if (PICO_SDK_VERSION_STRING VERSION_LESS "1.3.0")
 endif()
 
 add_subdirectory(lib/rfw)
+add_subdirectory(lib/ff15)
 
 file(GLOB_RECURSE SOURCES src/*.cpp)
 add_executable(${PROJECT}_main ${SOURCES})
 
 set(HARDWARE_LIBRARIES
+    fatfs
     pico_stdlib
     tinyusb_device
     tinyusb_host
@@ -95,9 +97,10 @@ target_link_libraries(${PROJECT}_main PRIVATE
 target_link_options(${PROJECT}_main PRIVATE -Xlinker --print-memory-usage)
 
 target_include_directories(${PROJECT}_main PRIVATE
-    ${CMAKE_CURRENT_LIST_DIR}/src/tinyusb
     ${CMAKE_CURRENT_LIST_DIR}/include
+    ${CMAKE_CURRENT_LIST_DIR}/include/tinyusb
     ${CMAKE_CURRENT_LIST_DIR}/lib/rfw/include
+    ${CMAKE_CURRENT_LIST_DIR}/lib/ff15
 )
 
 pico_add_extra_outputs(${PROJECT}_main)
