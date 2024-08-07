@@ -8,10 +8,11 @@
 #include <pico/stdlib.h>
 
 #include <rfw/filesystem/FileSystem.h>
+#include <rfw/clock/AbsoluteClock.h>
 
 #include <ff.h>
 
-class LogWriter
+class LogWriter : public virtual RFW::Base
 {
 public:
 	LogWriter();
@@ -31,6 +32,8 @@ public:
 private:
 	FIL *_file;
 	FRESULT _error;
+
+	std::shared_ptr<RFW::AbsoluteClock> _clock;
 	std::shared_ptr<RFW::FileSystem> _filesystem;
 
 	size_t vwritef(const char *format, va_list args);

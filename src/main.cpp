@@ -4,7 +4,8 @@
 
 #include <rfw/MetaProvider.hpp>
 
-#include "provider/DS3231.h"
+#include "hardware/DS3231.h"
+#include "software/LogWriter.h"
 
 int main()
 {
@@ -12,4 +13,7 @@ int main()
 
 	std::shared_ptr<DS3231> ds3231 = std::make_shared<DS3231>();
 	provider.registerProvider("DS3231", ds3231);
+
+	std::shared_ptr<LogWriter> logWriter = std::make_shared<LogWriter>();
+	provider.registerProvider("LogWriter", logWriter);
 }

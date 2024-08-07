@@ -1,4 +1,4 @@
-#include "provider/DS3231.h"
+#include "hardware/DS3231.h"
 
 DS3231::DS3231()
 {

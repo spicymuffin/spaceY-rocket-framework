@@ -1,4 +1,4 @@
-#include "consumer/LogWriter.h"
+#include "software/LogWriter.h"
 
 #include <rfw/MetaProvider.hpp>
 
@@ -8,7 +8,16 @@ LogWriter::LogWriter()
 	_error = FR_OK;
 
 	auto metaProvider = RFW::MetaProvider::getInstance();
+	_clock = metaProvider.getBestProvider<RFW::AbsoluteClock>(RFW::GetLast<RFW::AbsoluteClock>);
 	_filesystem = metaProvider.getProvider<RFW::FileSystem>("USBStorage");
+}
+
+LogWriter::~LogWriter()
+{
+	if (_file)
+	{
+		f_close(_file);
+	}
 }
 
 FRESULT LogWriter::open(const char *path, uint8_t mode)

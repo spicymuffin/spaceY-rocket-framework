@@ -53,7 +53,7 @@ namespace RFW
 			std::shared_ptr<I> bestProvider = nullptr;
 			for (const auto &provider : providers)
 			{
-				auto castedProvider = std::dynamic_pointer_cast<I>(provider);
+				auto castedProvider = std::dynamic_pointer_cast<I>(provider.second);
 				if (!castedProvider)
 				{
 					continue;
@@ -61,13 +61,13 @@ namespace RFW
 
 				if (bestProvider == nullptr)
 				{
-					bestProvider = provider;
+					bestProvider = castedProvider;
 					continue;
 				}
 
 				if (compare(bestProvider, castedProvider) < 0)
 				{
-					bestProvider = provider;
+					bestProvider = castedProvider;
 				}
 			}
 			return bestProvider;
@@ -91,4 +91,16 @@ namespace RFW
 		MetaProvider() = default;
 		std::map<std::string, std::shared_ptr<Base>> providers;
 	};
+
+	namespace
+	{
+		template <typename I>
+		int _getLast(std::shared_ptr<I> _a, std::shared_ptr<I> _b)
+		{
+			return -1;
+		}
+	}
+
+	template <typename I>
+	std::function<int(std::shared_ptr<I>, std::shared_ptr<I>)> GetLast(_getLast<I>);
 }
