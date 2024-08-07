@@ -13,14 +13,15 @@
 // pico sdk
 #include <string.h>
 #include <stdio.h>
-#include "pico/stdlib.h"
+
+#include <pico/stdlib.h>
 
 class HardwareController_picoonboardled
     : public HardwareController,
-    public ILedControl
+      public ILedControl
 {
 public:
-    HardwareController_picoonboardled(const char* _hardwareName, int _update_frequency);
+    HardwareController_picoonboardled(const char *_hardwareName, int _update_frequency);
     void set_state(const bool _state) override;
     void flip_state() override;
     const bool get_state() override;
