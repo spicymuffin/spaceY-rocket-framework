@@ -9,7 +9,7 @@ class USBStorage : public virtual RFW::FileSystem
 {
 public:
 	USBStorage();
-	virtual ~USBStorage() override = default;
+	virtual ~USBStorage() override;
 	void init() override;
 	void update() override;
 };

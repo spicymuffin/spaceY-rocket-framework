@@ -3,12 +3,39 @@
 #include "ff.h"
 #include "diskio.h"
 
+#include "bsp/board_api.h"
+#include "usb.h"
+
 USBStorage::USBStorage()
 {
 }
 
+USBStorage::~USBStorage()
+{
+}
+
+void USBStorage::init()
+{
+	if (usb_init_status & USB_BOARD_INITIALIZED == 0)
+	{
+		board_init();
+		if (board_init_after_tusb)
+		{
+			board_init_after_tusb();
+		}
+		usb_init_status |= USB_BOARD_INITIALIZED;
+	}
+
+	if (usb_init_status & USB_HOST_INITIALIZED == 0)
+	{
+		tuh_init(BOARD_TUH_RHPORT);
+		usb_init_status |= USB_HOST_INITIALIZED;
+	}
+}
+
 void USBStorage::update()
 {
+	tuh_task();
 }
 
 static volatile bool _disk_busy[CFG_TUH_DEVICE_MAX];
