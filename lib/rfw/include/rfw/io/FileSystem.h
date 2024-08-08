@@ -1,5 +1,5 @@
-#ifndef __RFW_FILESYSTEM_FILESYSTEM_H
-#define __RFW_FILESYSTEM_FILESYSTEM_H
+#ifndef __RFW_IO_FILESYSTEM_H
+#define __RFW_IO_FILESYSTEM_H
 
 #include "rfw/base/Update.h"
 
@@ -13,4 +13,4 @@ namespace RFW
 	};
 }
 
-#endif // __RFW_FILESYSTEM_FILESYSTEM_H
+#endif // __RFW_IO_FILESYSTEM_H

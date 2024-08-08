@@ -1,18 +1,21 @@
-#ifndef __RFW_CONSUMER_LOGWRITER_H
-#define __RFW_CONSUMER_LOGWRITER_H
+#ifndef __RFW_SOFTWARE_LOGWRITER_H
+#define __RFW_SOFTWARE_LOGWRITER_H
 
 #include <stddef.h>
 #include <stdarg.h>
 #include <memory>
 
 #include <pico/stdlib.h>
+#include <pico/platform.h>
+#include <pico/runtime.h>
 
-#include <rfw/filesystem/FileSystem.h>
+#include <rfw/io/FileSystem.h>
+#include <rfw/io/WriteStream.h>
 #include <rfw/clock/AbsoluteClock.h>
 
 #include <ff.h>
 
-class LogWriter : public virtual RFW::Base
+class LogWriter : public virtual RFW::WriteStream
 {
 public:
 	LogWriter();
@@ -22,12 +25,15 @@ public:
 	FRESULT flush();
 	FRESULT error() const;
 
-	size_t write(const char *data, size_t size);
-	size_t __printflike(2, 3) writef(const char *format, ...);
+	size_t io_write(const char *data, size_t size) override;
+	size_t __printflike(2, 3) io_writef(const char *format, ...) override;
+	size_t io_flush() override;
 
 	bool is_open() const;
 
 	virtual ~LogWriter();
+
+	void update() override;
 
 private:
 	FIL *_file;
@@ -39,4 +45,4 @@ private:
 	size_t vwritef(const char *format, va_list args);
 };
 
-#endif // __RFW_CONSUMER_LOGWRITER_H
+#endif // __RFW_SOFTWARE_LOGWRITER_H

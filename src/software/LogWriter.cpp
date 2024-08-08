@@ -55,7 +55,7 @@ FRESULT LogWriter::error() const
 	return _error;
 }
 
-size_t LogWriter::write(const char *data, size_t size)
+size_t LogWriter::io_write(const char *data, size_t size)
 {
 	if (!_filesystem)
 	{
@@ -68,7 +68,7 @@ size_t LogWriter::write(const char *data, size_t size)
 	return bytesWritten;
 }
 
-size_t __printflike(2, 3) LogWriter::writef(const char *format, ...)
+size_t __printflike(2, 3) LogWriter::io_writef(const char *format, ...)
 {
 	if (!_filesystem)
 	{
@@ -102,4 +102,22 @@ size_t LogWriter::vwritef(const char *format, va_list args)
 bool LogWriter::is_open() const
 {
 	return _file != nullptr;
+}
+
+size_t LogWriter::io_flush()
+{
+	if (!_filesystem)
+	{
+		return -1;
+	}
+
+	return f_sync(_file);
+}
+
+void LogWriter::update()
+{
+	// if (_clock)
+	// {
+	// 	_clock->update();
+	// }
 }

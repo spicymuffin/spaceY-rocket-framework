@@ -1,8 +1,8 @@
 /*
  * TODO: This is a core module, so it should be placed in rfw-pico or other
  */
-#ifndef __RFW_PROVIDER_GPIO_H
-#define __RFW_PROVIDER_GPIO_H
+#ifndef __RFW_HARDWARE_GPIO_H
+#define __RFW_HARDWARE_GPIO_H
 
 #include <rfw/base/Update.h>
 
@@ -17,4 +17,4 @@ public:
 	void update() override;
 };
 
-#endif
+#endif // __RFW_HARDWARE_GPIO_H
