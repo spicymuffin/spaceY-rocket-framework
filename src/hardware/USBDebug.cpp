@@ -92,6 +92,7 @@ size_t USBDebug::io_flush()
 
 void USBDebug::update()
 {
+	tud_cdc_write_flush();
 	tud_task();
 }
 
