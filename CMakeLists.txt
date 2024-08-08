@@ -79,16 +79,25 @@ add_subdirectory(lib/rfw)
 add_subdirectory(lib/ff15)
 
 file(GLOB_RECURSE SOURCES src/*.cpp)
+list(REMOVE_ITEM SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/test.cpp)
 add_executable(${PROJECT}_main ${SOURCES})
+# add_executable(${PROJECT}_test ${CMAKE_CURRENT_LIST_DIR}/src/test.cpp)
 
 set(HARDWARE_LIBRARIES
     fatfs
+    pico_util
     pico_stdlib
     pico_malloc
-    pico_util
+    pico_bootrom
+    pico_runtime
+    pico_platform
     pico_multicore
+    pico_cyw43_arch_none
     hardware_i2c
     hardware_spi
+    hardware_uart
+    hardware_flash
+    hardware_watchdog
     tinyusb_device
     tinyusb_host
     tinyusb_board
@@ -101,6 +110,12 @@ target_link_libraries(${PROJECT}_main PRIVATE
 )
 target_link_options(${PROJECT}_main PRIVATE -Xlinker --print-memory-usage)
 
+# target_link_libraries(${PROJECT}_test PRIVATE
+#     rfw
+#     ${HARDWARE_LIBRARIES}
+# )
+# target_link_options(${PROJECT}_test PRIVATE -Xlinker --print-memory-usage)
+
 target_include_directories(${PROJECT}_main PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/include
     ${CMAKE_CURRENT_LIST_DIR}/firmware
@@ -109,4 +124,16 @@ target_include_directories(${PROJECT}_main PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/lib/ff15
 )
 
+pico_enable_stdio_usb(${PROJECT}_main 0)
+pico_enable_stdio_uart(${PROJECT}_main 0)
 pico_add_extra_outputs(${PROJECT}_main)
+
+# pico_enable_stdio_usb(${PROJECT}_test 1)
+# pico_enable_stdio_uart(${PROJECT}_test 0)
+# pico_add_extra_outputs(${PROJECT}_test)
+
+target_compile_definitions(${PROJECT}_main PRIVATE
+  PICO_DEFAULT_UART=0
+  PICO_DEFAULT_UART_TX_PIN=0
+  PICO_DEFAULT_UART_RX_PIN=1
+)

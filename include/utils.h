@@ -3,6 +3,10 @@
 
 #include <pico/stdlib.h>
 
+#ifndef NDEBUG
+#define dprintf(writer, ...) RFW::io_writef(writer.get(), __VA_ARGS__)
+#endif
+
 void __printflike(1, 0) tud_cdc_printf(const char *fmt, ...);
 
 #endif // __UTILS_H

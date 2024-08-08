@@ -10,6 +10,7 @@
 #define WAIT_FALSE 1
 #define WAIT_NONE 2
 
+#include <stdio.h>
 #include <string.h>
 
 #include <pico/stdlib.h>
@@ -27,6 +28,11 @@ BHI360::~BHI360()
 
 void BHI360::init()
 {
+#ifndef NDEBUG
+	RFW::MetaProvider &provider = RFW::MetaProvider::getInstance();
+	_log = provider.getProvider<RFW::WriteStream>("DEBUG");
+#endif
+
 	spi_init(IMU_SPI_INST, 1000 * 1000);
 	spi_set_format(IMU_SPI_INST, 8, SPI_CPOL_1, SPI_CPHA_1, SPI_MSB_FIRST);
 	gpio_set_function(IMU_SPI_MISO, GPIO_FUNC_SPI);
@@ -43,32 +49,34 @@ void BHI360::init()
 	bi_decl(bi_4pins_with_func(IMU_SPI_MISO, IMU_SPI_MOSI, IMU_SPI_SCK, IMU_SPI_CSn, GPIO_FUNC_SPI));
 	bi_decl(bi_1pin_with_name(IMU_RESET, "IMU Reset"));
 
+	dprintf(_log, "[INFO] IMU Init\r\n");
+
 	if (!_imu_reset())
 	{
-		tud_cdc_printf("[ERRR] IMU Reset Failed\n");
+		dprintf(_log, "[ERRR] IMU Reset Failed\r\n");
 		panic("imu reset");
 	}
 
-	tud_cdc_printf("[INFO] IMU Reset Success\n");
+	dprintf(_log, "[INFO] IMU Reset Success\r\n");
 
 	uint8_t imu_identifier = _imu_read_reg(0x1C);
 	uint8_t imu_revision = _imu_read_reg(0x1D);
 	uint8_t rom_revision_lsb = _imu_read_reg(0x1E);
 	uint8_t rom_revision_msb = _imu_read_reg(0x1F);
 
-	tud_cdc_printf("[INFO] IMU Identifier: 0x%02X\n", imu_identifier);
-	tud_cdc_printf("[INFO] IMU Revision: 0x%02X\n", imu_revision);
-	tud_cdc_printf("[INFO] ROM Revision: 0x%02X%02X\n", rom_revision_msb, rom_revision_lsb);
+	dprintf(_log, "[INFO] IMU Identifier: 0x%02X\r\n", imu_identifier);
+	dprintf(_log, "[INFO] IMU Revision: 0x%02X\r\n", imu_revision);
+	dprintf(_log, "[INFO] ROM Revision: 0x%02X%02X\r\n", rom_revision_msb, rom_revision_lsb);
 
-	tud_cdc_printf("[INFO] IMU Reset\n");
+	dprintf(_log, "[INFO] IMU Reset\r\n");
 	_imu_reset_soft();
 	sleep_ms(100);
 
 	uint8_t feature_status = _imu_read_reg(0x24);
 	uint8_t boot_status = _imu_read_reg(0x25);
 
-	tud_cdc_printf("[INFO] Feature Status: 0x%02X\n", feature_status);
-	tud_cdc_printf("[INFO] Boot Status: 0x%02X\n", boot_status);
+	dprintf(_log, "[INFO] Feature Status: 0x%02X\r\n", feature_status);
+	dprintf(_log, "[INFO] Boot Status: 0x%02X\r\n", boot_status);
 }
 
 bool BHI360::_imu_reset()
@@ -89,15 +97,15 @@ bool BHI360::_imu_reset()
 		uint8_t sensor_id = _imu_read_reg(0x2B);
 		if (sensor_id == 0x70 || sensor_id == 0xF0)
 		{
-			tud_cdc_printf("[INFO] Sensor ID: 0x%X\n", sensor_id);
+			dprintf(_log, "[INFO] Sensor ID: 0x%X\r\n", sensor_id);
 			return true;
 		}
-		tud_cdc_printf("[INFO] Sensor ID: 0x%X, expected 0x70 or 0xF0 (%d / %d)\n", sensor_id, count, IMU_SENSOR_TRIES);
+		dprintf(_log, "[INFO] Sensor ID: 0x%X, expected 0x70 or 0xF0 (%d / %d)\r\n", sensor_id, count, IMU_SENSOR_TRIES);
 	}
 
 	if (count == IMU_SENSOR_TRIES)
 	{
-		tud_cdc_printf("[INFO] Sensor Soft Reset Failed, trying Hard Reset...\n");
+		dprintf(_log, "[INFO] Sensor Soft Reset Failed, trying Hard Reset...\r\n");
 	}
 
 	_imu_reset_hard();
@@ -117,10 +125,10 @@ bool BHI360::_imu_reset()
 		uint8_t sensor_id = _imu_read_reg(0x2B);
 		if (sensor_id == 0x70 || sensor_id == 0xF0)
 		{
-			tud_cdc_printf("[INFO] Sensor ID: 0x%X\n", sensor_id);
+			dprintf(_log, "[INFO] Sensor ID: 0x%X\r\n", sensor_id);
 			return true;
 		}
-		tud_cdc_printf("[INFO] Sensor ID: 0x%X, expected 0x70 or 0xF0 (%d / %d)\n", sensor_id, count, IMU_SENSOR_TRIES);
+		dprintf(_log, "[INFO] Sensor ID: 0x%X, expected 0x70 or 0xF0 (%d / %d)\r\n", sensor_id, count, IMU_SENSOR_TRIES);
 	}
 
 	return false;
@@ -177,22 +185,22 @@ void BHI360::_print_status(uint8_t status)
 	bool firmware_verify = (status & 0x40) == 0;
 	bool firmware_running = (status & 0x80) == 0;
 
-	tud_cdc_printf("[INFO] \n");
-	tud_cdc_printf("[INFO] Boot Status: 0x%02X\n", status);
-	tud_cdc_printf("[INFO] \tInterface: %s\n", interface_ready ? "Ready" : "Not Ready");
+	dprintf(_log, "[INFO] \r\n");
+	dprintf(_log, "[INFO] Boot Status: 0x%02X\r\n", status);
+	dprintf(_log, "[INFO] \tInterface: %s\r\n", interface_ready ? "Ready" : "Not Ready");
 	if (firmware_loading)
 	{
-		tud_cdc_printf("[INFO] \tFirmware: Verification in Progress\n");
+		dprintf(_log, "[INFO] \tFirmware: Verification in Progress\r\n");
 	}
 	else if (firmware_verify)
 	{
-		tud_cdc_printf("[INFO] \tFirmware: Verification Success\n");
+		dprintf(_log, "[INFO] \tFirmware: Verification Success\r\n");
 	}
 	else
 	{
-		tud_cdc_printf("[INFO] \tFirmware: Verification Failed\n");
+		dprintf(_log, "[INFO] \tFirmware: Verification Failed\r\n");
 	}
-	tud_cdc_printf("[INFO] \tFirmware State: %s\n\n", firmware_running ? "Running" : "Halted");
+	dprintf(_log, "[INFO] \tFirmware State: %s\r\n\n", firmware_running ? "Running" : "Halted");
 }
 
 bool BHI360::_poll_status(uint8_t check_ready, uint8_t check_verify, uint64_t print_interval_ms, uint64_t timeout_ms)
@@ -217,7 +225,7 @@ bool BHI360::_poll_status(uint8_t check_ready, uint8_t check_verify, uint64_t pr
 
 		if (time_us_64() - time_check_start > timeout_ms * 1000)
 		{
-			tud_cdc_printf("[ERROR] Timeout while waiting for the firmware to load\n");
+			dprintf(_log, "[ERROR] Timeout while waiting for the firmware to load\r\n");
 			return false;
 		}
 

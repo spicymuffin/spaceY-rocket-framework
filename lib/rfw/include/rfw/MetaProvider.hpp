@@ -1,3 +1,9 @@
+#ifndef __RFW_METAPROVIDER
+#define __RFW_METAPROVIDER
+
+#include "tusb.h"
+#include "utils.h"
+
 #include <map>
 #include <string>
 #include <memory>
@@ -26,21 +32,32 @@ namespace RFW
 			{
 				throw std::runtime_error("Provider with label " + label + " already exists");
 			}
-			providers[label] = provider;
+			providers.insert(std::make_pair(label, provider));
 		}
 
 		template <typename I>
 		std::shared_ptr<I> getProvider(const std::string &label)
 		{
+			for (auto &p : providers)
+			{
+				tud_cdc_printf("Provider in loop: %c\r\n", p.first.c_str()[0], p.first.c_str()[1]);
+				tud_cdc_write_flush();
+			}
+
 			auto provider = providers.find(label);
 			if (provider == providers.end())
 			{
 				return nullptr;
 			}
 
+			tud_cdc_printf("Provider found: %s\r\n", label.c_str());
+			tud_cdc_write_flush();
+
 			auto castedProvider = std::dynamic_pointer_cast<I>(provider->second);
 			if (!castedProvider)
 			{
+				tud_cdc_printf("Provider uncastable: %s\r\n", label.c_str());
+				tud_cdc_write_flush();
 				return nullptr;
 			}
 
@@ -87,8 +104,11 @@ namespace RFW
 			}
 		}
 
+		MetaProvider(MetaProvider const &) = delete;
+		void operator=(MetaProvider const &) = delete;
+
 	private:
-		MetaProvider() = default;
+		MetaProvider() {}
 		std::map<std::string, std::shared_ptr<Base>> providers;
 	};
 
@@ -104,3 +124,5 @@ namespace RFW
 	template <typename I>
 	std::function<int(std::shared_ptr<I>, std::shared_ptr<I>)> GetLast(_getLast<I>);
 }
+
+#endif // __RFW_METAPROVIDER
