@@ -68,15 +68,53 @@ void BHI360::init()
 	dprintf(_log, "[INFO] IMU Revision: 0x%02X\r\n", imu_revision);
 	dprintf(_log, "[INFO] ROM Revision: 0x%02X%02X\r\n", rom_revision_msb, rom_revision_lsb);
 
-	dprintf(_log, "[INFO] IMU Reset\r\n");
-	_imu_reset_soft();
-	sleep_ms(100);
-
 	uint8_t feature_status = _imu_read_reg(0x24);
 	uint8_t boot_status = _imu_read_reg(0x25);
 
 	dprintf(_log, "[INFO] Feature Status: 0x%02X\r\n", feature_status);
 	dprintf(_log, "[INFO] Boot Status: 0x%02X\r\n", boot_status);
+
+	_imu_write_reg(0x14, 0x01);
+	_imu_write_reg(0x05, 0x00);
+	_imu_write_reg(0x06, 0x00);
+	_imu_write_reg(0x07, 0x00);
+
+	if (!_poll_status(WAIT_TRUE, WAIT_NONE))
+	{
+		panic("imu status: interface");
+	}
+
+	dprintf(_log, "[INFO] Loading Firmware...\r\n");
+	uint8_t payload[5];
+
+	payload[0] = 0x00;
+	payload[1] = 0x02;
+	payload[2] = 0x00;
+
+	uint16_t fw_len = IMU_FIRMWARE_LEN / 4;
+	payload[3] = fw_len & 0xFF;
+	payload[4] = (fw_len >> 8) & 0xFF;
+
+	printf("[INFO] Command Length: 5\n");
+	printf("[INFO] Firmware Length: %d\n", IMU_FIRMWARE_LEN);
+	printf("[INFO] Total Length: %d\n", 5 + IMU_FIRMWARE_LEN);
+	printf("\n");
+
+	// TODO: Fix here if the ram is not enough
+	gpio_put(IMU_SPI_CSn, 0);
+	spi_write_blocking(IMU_SPI_INST, payload, 5);
+	spi_write_blocking(IMU_SPI_INST, IMU_FIRMWARE, IMU_FIRMWARE_LEN);
+	gpio_put(IMU_SPI_CSn, 1);
+
+	printf("[INFO] Verifying Firmware\n");
+	_poll_status(WAIT_NONE, WAIT_TRUE, 1000, 60 * 1000);
+
+	printf("[INFO] Starting Firmware\n");
+	payload[0] = 0x00;
+	payload[1] = 0x03;
+	payload[2] = 0x00;
+	payload[3] = 0x00;
+	payload[4] = 0x00;
 }
 
 bool BHI360::_imu_reset()
@@ -95,12 +133,23 @@ bool BHI360::_imu_reset()
 		count++;
 
 		uint8_t sensor_id = _imu_read_reg(0x2B);
-		if (sensor_id == 0x70 || sensor_id == 0xF0)
+#if defined(IMU_SENSOR_ID1) && !defined(IMU_SENSOR_ID2)
+		if (sensor_id == IMU_SENSOR_ID1)
 		{
 			dprintf(_log, "[INFO] Sensor ID: 0x%X\r\n", sensor_id);
 			return true;
 		}
-		dprintf(_log, "[INFO] Sensor ID: 0x%X, expected 0x70 or 0xF0 (%d / %d)\r\n", sensor_id, count, IMU_SENSOR_TRIES);
+		dprintf(_log, "[INFO] Sensor ID: 0x%X, expected 0x%02X (%d / %d)\r\n", sensor_id, IMU_SENSOR_ID1, count, IMU_SENSOR_TRIES);
+#elif defined(IMU_SENSOR_ID1) && defined(IMU_SENSOR_ID2)
+		if (sensor_id == IMU_SENSOR_ID1 || sensor_id == IMU_SENSOR_ID2)
+		{
+			dprintf(_log, "[INFO] Sensor ID: 0x%X\r\n", sensor_id);
+			return true;
+		}
+		dprintf(_log, "[INFO] Sensor ID: 0x%X, expected 0x%02X or 0x%02X (%d / %d)\r\n", sensor_id, IMU_SENSOR_ID1, IMU_SENSOR_ID2, count, IMU_SENSOR_TRIES);
+#else
+#error "IMU_SENSOR_ID1 must be defined"
+#endif
 	}
 
 	if (count == IMU_SENSOR_TRIES)
@@ -123,12 +172,23 @@ bool BHI360::_imu_reset()
 		count++;
 
 		uint8_t sensor_id = _imu_read_reg(0x2B);
-		if (sensor_id == 0x70 || sensor_id == 0xF0)
+#if defined(IMU_SENSOR_ID1) && !defined(IMU_SENSOR_ID2)
+		if (sensor_id == IMU_SENSOR_ID1)
 		{
 			dprintf(_log, "[INFO] Sensor ID: 0x%X\r\n", sensor_id);
 			return true;
 		}
-		dprintf(_log, "[INFO] Sensor ID: 0x%X, expected 0x70 or 0xF0 (%d / %d)\r\n", sensor_id, count, IMU_SENSOR_TRIES);
+		dprintf(_log, "[INFO] Sensor ID: 0x%X, expected 0x%02X (%d / %d)\r\n", sensor_id, IMU_SENSOR_ID1, count, IMU_SENSOR_TRIES);
+#elif defined(IMU_SENSOR_ID1) && defined(IMU_SENSOR_ID2)
+		if (sensor_id == IMU_SENSOR_ID1 || sensor_id == IMU_SENSOR_ID2)
+		{
+			dprintf(_log, "[INFO] Sensor ID: 0x%X\r\n", sensor_id);
+			return true;
+		}
+		dprintf(_log, "[INFO] Sensor ID: 0x%X, expected 0x%02X or 0x%02X (%d / %d)\r\n", sensor_id, IMU_SENSOR_ID1, IMU_SENSOR_ID2, count, IMU_SENSOR_TRIES);
+#else
+#error "IMU_SENSOR_ID1 must be defined"
+#endif
 	}
 
 	return false;

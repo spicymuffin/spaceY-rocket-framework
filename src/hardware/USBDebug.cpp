@@ -19,6 +19,7 @@ void preinit()
 {
 	while (true)
 	{
+		tud_cdc_write_flush();
 		tud_task();
 	}
 }

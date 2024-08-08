@@ -16,18 +16,17 @@
 #include "usb.h"
 #include "tusb.h"
 
-int usb_init_status = 0;
+RFW::MetaProvider &provider = RFW::MetaProvider::getInstance();
 
 void logic_main()
 {
+	// This is the main logic (running motors and comms here)
 }
 
 int main()
 {
 	board_init();
 	cyw43_arch_init();
-
-	RFW::MetaProvider &provider = RFW::MetaProvider::getInstance();
 
 	// Since some providers depend on others, we need to register them first
 	std::shared_ptr<USBDebug> usbDebug = std::make_shared<USBDebug>();
@@ -54,6 +53,7 @@ int main()
 	logWriter->init();
 
 	multicore_reset_core1();
+	multicore_launch_core1(logic_main);
 
 	while (true)
 	{

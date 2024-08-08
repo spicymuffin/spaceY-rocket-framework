@@ -12,7 +12,6 @@ void tud_cdc_vprintf(const char *fmt, va_list args)
 	vsprintf(message, fmt, args);
 
 	tud_cdc_write_str(message);
-	tud_cdc_write_flush();
 }
 
 void __printflike(1, 0) tud_cdc_printf(const char *fmt, ...)
