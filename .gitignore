@@ -169,3 +169,6 @@ $RECYCLE.BIN/
 
 build/
 dist/
+
+# Prohibit the following files to be updated (Bosch Sensortec Agreement)
+firmware/Bosch_Shuttle3_BHI360_BMM350C_BMP580_BME688.fw.h
