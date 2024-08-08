@@ -5,7 +5,7 @@
 
 namespace RFW
 {
-	class Pressure : public Base
+	class Pressure : public virtual Base
 	{
 	public:
 		virtual double get_pressure() = 0;

@@ -85,6 +85,7 @@ set(HARDWARE_LIBRARIES
     fatfs
     pico_stdlib
     pico_malloc
+    hardware_spi
     tinyusb_device
     tinyusb_host
     tinyusb_board
@@ -99,6 +100,7 @@ target_link_options(${PROJECT}_main PRIVATE -Xlinker --print-memory-usage)
 
 target_include_directories(${PROJECT}_main PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/include
+    ${CMAKE_CURRENT_LIST_DIR}/firmware
     ${CMAKE_CURRENT_LIST_DIR}/include/tinyusb
     ${CMAKE_CURRENT_LIST_DIR}/lib/rfw/include
     ${CMAKE_CURRENT_LIST_DIR}/lib/ff15
