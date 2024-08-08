@@ -8,6 +8,8 @@ class DS3231 : public virtual RFW::AbsoluteClock, public virtual RFW::Temperatur
 {
 public:
 	DS3231();
+	virtual ~DS3231() override = default;
+	void init() override;
 	double get_temperature() override;
 	uint64_t get_time_ms() override;
 	uint64_t get_time_us() override;

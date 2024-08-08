@@ -19,6 +19,9 @@ class LogWriter : public virtual RFW::WriteStream
 {
 public:
 	LogWriter();
+	virtual ~LogWriter() override;
+
+	void init() override;
 
 	FRESULT open(const char *path, uint8_t mode);
 	FRESULT close();
@@ -34,9 +37,6 @@ public:
 	size_t io_flush() override;
 
 	bool is_open() const;
-
-	virtual ~LogWriter();
-
 	void update() override;
 
 private:

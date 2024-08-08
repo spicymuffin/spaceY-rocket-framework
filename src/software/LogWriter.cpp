@@ -6,7 +6,10 @@ LogWriter::LogWriter()
 {
 	_file = nullptr;
 	_error = FR_OK;
+}
 
+void LogWriter::init()
+{
 	auto metaProvider = RFW::MetaProvider::getInstance();
 	_clock = metaProvider.getBestProvider<RFW::AbsoluteClock>(RFW::GetLast<RFW::AbsoluteClock>);
 	_filesystem = metaProvider.getProvider<RFW::FileSystem>("USBStorage");

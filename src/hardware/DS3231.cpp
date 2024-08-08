@@ -4,6 +4,10 @@ DS3231::DS3231()
 {
 }
 
+void DS3231::init()
+{
+}
+
 double DS3231::get_temperature()
 {
 	return 0;

@@ -12,6 +12,8 @@ class GPIO : public virtual RFW::Update
 {
 public:
 	GPIO();
+	virtual ~GPIO() override = default;
+	void init() override;
 	void set_pin(uint8_t pin, bool value);
 	bool get_pin(uint8_t pin);
 	void update() override;
