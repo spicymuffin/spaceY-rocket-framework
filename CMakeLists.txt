@@ -84,6 +84,7 @@ add_executable(${PROJECT}_main ${SOURCES})
 set(HARDWARE_LIBRARIES
     fatfs
     pico_stdlib
+    pico_malloc
     tinyusb_device
     tinyusb_host
     tinyusb_board

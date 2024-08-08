@@ -1,4 +1,4 @@
-#include "hardware/USBStorage.h"
+#include "provider/hardware/USBStorage.h"
 
 #include "ff.h"
 #include "diskio.h"

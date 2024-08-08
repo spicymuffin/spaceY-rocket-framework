@@ -1,4 +1,4 @@
-#include "software/LogWriter.h"
+#include "provider/software/LogWriter.h"
 
 #include <rfw/MetaProvider.hpp>
 
@@ -68,22 +68,22 @@ size_t LogWriter::io_write(const char *data, size_t size)
 	return bytesWritten;
 }
 
-size_t __printflike(2, 3) LogWriter::io_writef(const char *format, ...)
-{
-	if (!_filesystem)
-	{
-		return -1;
-	}
+// size_t __printflike(2, 3) LogWriter::io_writef(const char *format, ...)
+// {
+// 	if (!_filesystem)
+// 	{
+// 		return -1;
+// 	}
+//
+// 	va_list args;
+// 	va_start(args, format);
+// 	size_t bytesWritten = io_vwritef(format, args);
+// 	va_end(args);
+//
+// 	return bytesWritten;
+// }
 
-	va_list args;
-	va_start(args, format);
-	size_t bytesWritten = vwritef(format, args);
-	va_end(args);
-
-	return bytesWritten;
-}
-
-size_t LogWriter::vwritef(const char *format, va_list args)
+size_t LogWriter::io_vwritef(const char *format, va_list args)
 {
 	if (!_filesystem)
 	{

@@ -4,8 +4,8 @@
 
 #include <rfw/MetaProvider.hpp>
 
-#include "hardware/DS3231.h"
-#include "software/LogWriter.h"
+#include "provider/hardware/DS3231.h"
+#include "provider/software/LogWriter.h"
 
 int main()
 {

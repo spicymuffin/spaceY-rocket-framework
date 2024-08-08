@@ -26,7 +26,11 @@ public:
 	FRESULT error() const;
 
 	size_t io_write(const char *data, size_t size) override;
-	size_t __printflike(2, 3) io_writef(const char *format, ...) override;
+
+	// FIXME: printf-like function is not supported as a virtual function in Pico SDK
+	// error: generic thunk code fails for method 'virtual size_t LogWriter::_ZTv0_n28_N9LogWriter9io_writefEPKcz(const char*, ...)' which uses '...'
+	// size_t __printflike(2, 3) io_writef(const char *format, ...) override;
+	size_t io_vwritef(const char *format, va_list args);
 	size_t io_flush() override;
 
 	bool is_open() const;
@@ -41,8 +45,6 @@ private:
 
 	std::shared_ptr<RFW::AbsoluteClock> _clock;
 	std::shared_ptr<RFW::FileSystem> _filesystem;
-
-	size_t vwritef(const char *format, va_list args);
 };
 
 #endif // __RFW_SOFTWARE_LOGWRITER_H
