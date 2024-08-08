@@ -5,7 +5,7 @@
 
 namespace RFW
 {
-	class Update : public Base
+	class Update : public virtual Base
 	{
 	public:
 		virtual void update() = 0;

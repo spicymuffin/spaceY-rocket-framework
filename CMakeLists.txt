@@ -85,6 +85,9 @@ set(HARDWARE_LIBRARIES
     fatfs
     pico_stdlib
     pico_malloc
+    pico_util
+    pico_multicore
+    hardware_i2c
     hardware_spi
     tinyusb_device
     tinyusb_host

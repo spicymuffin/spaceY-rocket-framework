@@ -3,7 +3,7 @@
 
 #include <hardware/flash.h>
 
-#include "usb_cdc.h"
+#include "usb.h"
 
 #define DESC_STR_MAX 20
 

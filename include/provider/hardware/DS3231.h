@@ -14,6 +14,9 @@ public:
 	uint64_t get_time_ms() override;
 	uint64_t get_time_us() override;
 	void set_time(uint64_t time) override;
+
+private:
+	uint64_t _time_start;
 };
 
 #endif // __RFW_HARDWARE_DS3231_H
