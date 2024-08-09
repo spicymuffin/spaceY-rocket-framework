@@ -54,7 +54,6 @@ void USBDebug::init()
 			last_print = time_us_64();
 		}
 
-		tuh_task();
 		tud_task();
 
 		int32_t c = io_read();

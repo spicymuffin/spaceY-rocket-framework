@@ -14,6 +14,9 @@
 #define IMU_FIRMWARE_H "Bosch_Shuttle3_BHI360_BMM350C_BMP580_BME688.fw.h"
 #define IMU_FIRMWARE Bosch_Shuttle3_BHI360_BMM350C_BMP580_BME688_fw
 
+// #define IMU_FIRMWARE_H "Bosch_Shuttle3_BHI360_BMM350C_HeadOrientation_hearable.fw.h"
+// #define IMU_FIRMWARE Bosch_Shuttle3_BHI360_BMM350C_HeadOrientation_hearable_fw
+
 // For BHI360
 #define IMU_SENSOR_ID1 0x7A
 // #define IMU_SENSOR_ID2

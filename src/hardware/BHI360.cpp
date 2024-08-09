@@ -3,13 +3,6 @@
 
 #include "provider/hardware/BHI360.h"
 
-#include IMU_FIRMWARE_H
-#define IMU_FIRMWARE_LEN __CONCAT(IMU_FIRMWARE, _len)
-
-#define WAIT_TRUE 0
-#define WAIT_FALSE 1
-#define WAIT_NONE 2
-
 #include <stdio.h>
 #include <string.h>
 
@@ -18,8 +11,21 @@
 
 #include <hardware/spi.h>
 
+#include IMU_FIRMWARE_H
+#define IMU_FIRMWARE_LEN __CONCAT(IMU_FIRMWARE, _len)
+
 BHI360::BHI360()
 {
+	for (int i = 0; i < 3; i++)
+	{
+		fifo_data[i].rindex = 0;
+		fifo_data[i].windex = 0;
+		for (int j = 0; j < FIFO_BUFFER_SIZE; j++)
+		{
+			fifo_data[i].data[j].length = 0;
+			memset(fifo_data[i].data[j].data, 0, 32);
+		}
+	}
 }
 
 BHI360::~BHI360()
@@ -95,10 +101,10 @@ void BHI360::init()
 	payload[3] = fw_len & 0xFF;
 	payload[4] = (fw_len >> 8) & 0xFF;
 
-	printf("[INFO] Command Length: 5\n");
-	printf("[INFO] Firmware Length: %d\n", IMU_FIRMWARE_LEN);
-	printf("[INFO] Total Length: %d\n", 5 + IMU_FIRMWARE_LEN);
-	printf("\n");
+	dprintf(_log, "[INFO] Command Length: 5\r\n");
+	dprintf(_log, "[INFO] Firmware Length: %d\r\n", IMU_FIRMWARE_LEN);
+	dprintf(_log, "[INFO] Total Length: %d\r\n", 5 + IMU_FIRMWARE_LEN);
+	dprintf(_log, "\r\n");
 
 	// TODO: Fix here if the ram is not enough
 	gpio_put(IMU_SPI_CSn, 0);
@@ -106,15 +112,44 @@ void BHI360::init()
 	spi_write_blocking(IMU_SPI_INST, IMU_FIRMWARE, IMU_FIRMWARE_LEN);
 	gpio_put(IMU_SPI_CSn, 1);
 
-	printf("[INFO] Verifying Firmware\n");
+	dprintf(_log, "[INFO] Verifying Firmware\r\n");
 	_poll_status(WAIT_NONE, WAIT_TRUE, 1000, 60 * 1000);
 
-	printf("[INFO] Starting Firmware\n");
+	dprintf(_log, "[INFO] Starting Firmware\r\n");
 	payload[0] = 0x00;
 	payload[1] = 0x03;
 	payload[2] = 0x00;
 	payload[3] = 0x00;
 	payload[4] = 0x00;
+
+	gpio_put(IMU_SPI_CSn, 0);
+	spi_write_blocking(IMU_SPI_INST, payload, 5);
+	gpio_put(IMU_SPI_CSn, 1);
+
+	_poll_status(WAIT_FALSE, WAIT_NONE);
+	_poll_status(WAIT_TRUE, WAIT_NONE);
+
+	uint64_t initalized = 0;
+	while (initalized < 2)
+	{
+		initalized += _sensor_task();
+		dprintf(_log, "Processed %d task(s)\r\n", initalized);
+	}
+
+	sleep_ms(100);
+	dprintf(_log, "\r\n[INFO] Sensor Initialized\r\n");
+	sleep_ms(100);
+
+	_imu_start_sensor(0x04); // Accelerometer
+	_imu_start_sensor(0x0D); // Gyroscope
+	_imu_start_sensor(0x16); // Magnetometer
+	_imu_start_sensor(0x80); // Temperature
+	_imu_start_sensor(0x81); // Barometer
+
+	while (true)
+	{
+		_sensor_task();
+	}
 }
 
 bool BHI360::_imu_reset()
@@ -315,4 +350,151 @@ double BHI360::get_temperature()
 
 void BHI360::update()
 {
+	_sensor_task();
+}
+
+uint64_t BHI360::_sensor_task()
+{
+	uint8_t messages = 0;
+
+	uint8_t intr = _imu_read_reg(0x2D);
+
+	if (intr & 0x01 == 0)
+	{
+		return 0;
+	}
+
+	uint8_t wakeup_status = (intr >> 1) & 0x03;
+	uint8_t nwakeup_status = (intr >> 3) & 0x03;
+	uint8_t debug_status = (intr >> 6) & 0x01;
+
+	if (wakeup_status != 0)
+	{
+		_process_fifo(CHANNEL_WAKEUP_FIFO);
+		messages++;
+	}
+
+	if (nwakeup_status != 0)
+	{
+		_process_fifo(CHANNEL_NON_WAKEUP_FIFO);
+		messages++;
+	}
+
+	if (debug_status != 0)
+	{
+		_process_fifo(CHANNEL_STATUS_DEBUG_FIFO);
+		messages++;
+	}
+
+	return messages;
+}
+
+void BHI360::_process_fifo(uint8_t fifo_index)
+{
+	fifo_buffer_t *buffer = fifo_data + (fifo_index - 1);
+
+	uint32_t read_length = 0;
+
+	fifo_index = fifo_index | 0x80; // Read command
+
+	dprintf(_log, "Reading FIFO %d\r\n", fifo_index - 0x80);
+
+	uint8_t data_size_buf[2];
+	gpio_put(IMU_SPI_CSn, 0);
+	spi_write_blocking(IMU_SPI_INST, &fifo_index, 1);
+	spi_read_blocking(IMU_SPI_INST, 0, data_size_buf, 2);
+	gpio_put(IMU_SPI_CSn, 1);
+
+	uint16_t data_size = data_size_buf[0] | (data_size_buf[1] << 8);
+	if (data_size == 0)
+	{
+		return;
+	}
+
+	dprintf(_log, "FIFO %d Size: %d\r\n", fifo_index - 0x80, data_size);
+
+	uint16_t data_read = 0;
+	while (data_read < data_size)
+	{
+		uint16_t remainder = data_size - data_read;
+		buffer->data[buffer->windex].length = remainder > 32 ? 32 : remainder;
+
+		dprintf(_log, "Reading %d bytes from FIFO %d\r\n", remainder, fifo_index - 0x80);
+
+		gpio_put(IMU_SPI_CSn, 0);
+		spi_write_blocking(IMU_SPI_INST, &fifo_index, 1);
+		spi_read_blocking(IMU_SPI_INST, 0, buffer->data[buffer->windex].data, buffer->data[buffer->windex].length);
+		gpio_put(IMU_SPI_CSn, 1);
+
+		dprintf(_log, "\r\n");
+		for (int i = 0; i < data_size; ++i)
+		{
+			dprintf(_log, "%02X ", buffer->data[buffer->windex].data[i]);
+		}
+		dprintf(_log, "\r\n");
+
+		data_read += buffer->data[buffer->windex].length;
+		buffer->windex = (buffer->windex + 1) % FIFO_BUFFER_SIZE;
+	}
+}
+
+uint16_t BHI360::_imu_read_fifo(uint8_t fifo_index, uint8_t fifo_buffer[32])
+{
+	fifo_buffer_t *buffer = fifo_data + (fifo_index - 1);
+
+	if (buffer->rindex == buffer->windex)
+	{
+		return (uint16_t)-1;
+	}
+
+	uint16_t length = buffer->data[buffer->rindex].length;
+	memcpy(fifo_buffer, buffer->data[buffer->rindex].data, 32);
+
+	buffer->rindex = (buffer->rindex + 1) % FIFO_BUFFER_SIZE;
+
+	return length;
+}
+
+void BHI360::_imu_write_fifo(uint8_t fifo_index, uint8_t fifo_buffer[32], uint16_t length)
+{
+	fifo_buffer_t *buffer = fifo_data + (fifo_index - 1);
+
+	if ((buffer->windex + 1) % FIFO_BUFFER_SIZE == buffer->rindex)
+	{
+		return;
+	}
+
+	buffer->data[buffer->windex].length = length;
+	memcpy(buffer->data[buffer->windex].data, fifo_buffer, 32);
+
+	buffer->windex = (buffer->windex + 1) % FIFO_BUFFER_SIZE;
+}
+
+void BHI360::_imu_start_sensor(uint8_t sensor_id)
+{
+	float rate = 100;
+
+	uint8_t sensor_init[13];
+	sensor_init[0] = 0x00;
+
+	sensor_init[1] = 0x0D; // 0x00
+	sensor_init[2] = 0x00; // 0x01
+
+	sensor_init[3] = 0x08; // 0x02
+	sensor_init[4] = 0x00; // 0x03
+
+	sensor_init[5] = sensor_id; // 0x04 BHY2_SENSOR_ID_ACC
+
+	sensor_init[6] = (uint32_t)rate & 0xFF;			// 0x05
+	sensor_init[7] = ((uint32_t)rate >> 8) & 0xFF;	// 0x06
+	sensor_init[8] = ((uint32_t)rate >> 16) & 0xFF; // 0x07
+	sensor_init[9] = ((uint32_t)rate >> 24) & 0xFF; // 0x08
+
+	sensor_init[10] = 0x00; // 0x09
+	sensor_init[11] = 0x00; // 0x0A
+	sensor_init[12] = 0x00; // 0x0B
+
+	gpio_put(IMU_SPI_CSn, 0);
+	spi_write_blocking(IMU_SPI_INST, sensor_init, 13);
+	gpio_put(IMU_SPI_CSn, 1);
 }

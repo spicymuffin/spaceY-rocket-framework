@@ -30,7 +30,7 @@ static void wait_for_disk_io(BYTE pdrv)
 {
 	while (_disk_busy[pdrv])
 	{
-		tuh_task();
+		tight_loop_contents();
 	}
 }
 

@@ -5,6 +5,8 @@
 
 #ifndef NDEBUG
 #define dprintf(writer, ...) RFW::io_writef(writer.get(), __VA_ARGS__)
+#else
+#define dprintf(writer, ...)
 #endif
 
 void __printflike(1, 0) tud_cdc_printf(const char *fmt, ...);
