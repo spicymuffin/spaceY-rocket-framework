@@ -1,9 +1,10 @@
-#include "provider/hardware/DS3231.h"
-
 #include "utils.h"
+
+#include "provider/hardware/DS3231.h"
 
 #include <pico/stdlib.h>
 #include <pico/util/datetime.h>
+#include <pico/cyw43_arch.h>
 
 #include <hardware/i2c.h>
 
@@ -23,6 +24,17 @@ DS3231::DS3231()
 
 void DS3231::init()
 {
+#ifndef NDEBUG
+	RFW::MetaProvider &provider = RFW::MetaProvider::getInstance();
+	_log = provider.getProvider<RFW::WriteStream>("DEBUG");
+
+	if (!_log)
+	{
+		tud_cdc_printf("[ERRR] DS3231: No debug provider found\n");
+		cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
+	}
+#endif
+
 	uint8_t buf[7] = {
 		0,
 	};
@@ -36,7 +48,7 @@ void DS3231::init()
 	buf[4] = bcd_to_dec(buf[4] & 0x3F); // day
 	buf[5] = bcd_to_dec(buf[5] & 0x1F); // month
 
-	tud_cdc_printf("\r\nRTC: 20%02d-%02d-%02d %02d:%02d:%02d\r\n", buf[6], buf[5], buf[4], buf[2], buf[1], buf[0]);
+	dprintf(_log, "\r\nRTC: 20%02d-%02d-%02d %02d:%02d:%02d\r\n", buf[6], buf[5], buf[4], buf[2], buf[1], buf[0]);
 
 	// struct datetimte_t dt = {
 	// 	.year = buf[6] + 2000,

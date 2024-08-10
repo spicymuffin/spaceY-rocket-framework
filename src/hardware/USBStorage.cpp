@@ -16,21 +16,7 @@ USBStorage::~USBStorage()
 
 void USBStorage::init()
 {
-	if (usb_init_status & USB_BOARD_INITIALIZED == 0)
-	{
-		board_init();
-		if (board_init_after_tusb)
-		{
-			board_init_after_tusb();
-		}
-		usb_init_status |= USB_BOARD_INITIALIZED;
-	}
-
-	if (usb_init_status & USB_HOST_INITIALIZED == 0)
-	{
-		tuh_init(BOARD_TUH_RHPORT);
-		usb_init_status |= USB_HOST_INITIALIZED;
-	}
+	tuh_init(BOARD_TUH_RHPORT);
 }
 
 void USBStorage::update()
@@ -44,7 +30,7 @@ static void wait_for_disk_io(BYTE pdrv)
 {
 	while (_disk_busy[pdrv])
 	{
-		tuh_task();
+		tight_loop_contents();
 	}
 }
 

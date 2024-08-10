@@ -2,6 +2,7 @@
 #include "tusb.h"
 
 #include <hardware/flash.h>
+#include <hardware/uart.h>
 
 #include "usb.h"
 

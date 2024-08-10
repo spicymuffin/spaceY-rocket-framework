@@ -1,3 +1,9 @@
+#ifndef __RFW_METAPROVIDER
+#define __RFW_METAPROVIDER
+
+#include "tusb.h"
+#include "utils.h"
+
 #include <map>
 #include <string>
 #include <memory>
@@ -26,7 +32,7 @@ namespace RFW
 			{
 				throw std::runtime_error("Provider with label " + label + " already exists");
 			}
-			providers[label] = provider;
+			providers.insert(std::make_pair(label, provider));
 		}
 
 		template <typename I>
@@ -87,8 +93,11 @@ namespace RFW
 			}
 		}
 
+		MetaProvider(MetaProvider const &) = delete;
+		void operator=(MetaProvider const &) = delete;
+
 	private:
-		MetaProvider() = default;
+		MetaProvider() {}
 		std::map<std::string, std::shared_ptr<Base>> providers;
 	};
 
@@ -104,3 +113,5 @@ namespace RFW
 	template <typename I>
 	std::function<int(std::shared_ptr<I>, std::shared_ptr<I>)> GetLast(_getLast<I>);
 }
+
+#endif // __RFW_METAPROVIDER

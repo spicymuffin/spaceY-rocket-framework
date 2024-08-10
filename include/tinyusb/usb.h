@@ -5,8 +5,6 @@
 #define USB_HOST_INITIALIZED 0x2
 #define USB_DEVICE_INITIALIZED 0x4
 
-extern int usb_init_status;
-
-void usbd_serial_init();
+void usbd_serial_init(void);
 
 #endif // __USB_CDC_H

@@ -4,6 +4,13 @@
 #include <rfw/clock/AbsoluteClock.h>
 #include <rfw/environment/Temperature.h>
 
+#ifndef NDEBUG
+#include <memory>
+
+#include <rfw/io/WriteStream.h>
+#include <rfw/MetaProvider.hpp>
+#endif
+
 class DS3231 : public virtual RFW::AbsoluteClock, public virtual RFW::Temperature
 {
 public:
@@ -17,6 +24,9 @@ public:
 
 private:
 	uint64_t _time_start;
+#ifndef NDEBUG
+	std::shared_ptr<RFW::WriteStream> _log;
+#endif
 };
 
 #endif // __RFW_HARDWARE_DS3231_H

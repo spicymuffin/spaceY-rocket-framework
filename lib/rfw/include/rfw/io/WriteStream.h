@@ -24,4 +24,4 @@ namespace RFW
 	size_t io_writef(WriteStream *stream, const char *format, ...);
 }
 
-#endif
+#endif // __RFW_IO_WRITESTREAM_H
