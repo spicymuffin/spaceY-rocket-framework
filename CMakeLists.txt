@@ -37,7 +37,7 @@ endif()
 find_package(Python3 COMPONENTS Interpreter)
 execute_process(COMMAND ${Python3_EXECUTABLE} ${PICO_TINYUSB_PATH}/tools/get_deps.py rp2040)
 
-# 
+#
 # Generic Setup
 #
 set(FAMILY rp2040)
